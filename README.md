@@ -45,11 +45,11 @@ Wget can usually be installed via your system's package manager:
 Clone the repository containing the Nix Configuration Manager code:
 
 ```sh
-git clone [URL to the repository]
-cd [repository name]
+git clone https://github.com/soltros/configbuilder.git
+cd configbuilder
 ```
 
-Replace `[URL to the repository]` and `[repository name]` with the actual URL and name of your repository.
+
 
 ## Running the Program
 
