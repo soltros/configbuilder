@@ -1,5 +1,5 @@
 
-# README for Nix Configuration Manager
+# NixOS Configbuilder
 
 ## Overview
 
