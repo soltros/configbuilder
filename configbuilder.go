@@ -40,6 +40,7 @@ var moduleChoices = []string{
     "keymap.nix",
     "garbagecollection.nix",
     "server.nix",
+    "fish-shell-support.nix",
 }
 
 func createBackup() {
