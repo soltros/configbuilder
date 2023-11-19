@@ -11,6 +11,54 @@ Before you can run this program, you need to have the following installed:
 
 1. **Go Programming Language**: The program is written in Go, so you need to have Go installed on your system.
 2. **Wget**: The program uses `wget` to download Nix modules, so `wget` needs to be installed.
+3. **Go Modules**: The ConfigBuilder app requires several Go modules and packages for its functionality.
+
+### Required Modules
+
+The app uses the following Go standard libraries and an external package:
+
+- Standard libraries:
+  - `fmt`
+  - `os`
+  - `os/exec`
+  - `path/filepath`
+
+- External package:
+  - `github.com/AlecAivazis/survey/v2`
+
+### Steps to Install Modules
+
+1. **Clone the Repository**: First, clone the ConfigBuilder repository to your local machine using Git:
+    ```sh
+    git clone [URL to ConfigBuilder repository] ~/configbuilder
+    ```
+    Replace `[URL to ConfigBuilder repository]` with the actual URL of your Git repository.
+
+2. **Open Terminal or Command Prompt**: Access your terminal (Linux/macOS) or command prompt (Windows).
+
+3. **Navigate to the ConfigBuilder Directory**: Change to the `configbuilder` directory:
+    ```sh
+    cd ~/configbuilder
+    ```
+
+4. **Initialize Go Module**: If the Go module hasn't been initialized in your project directory, do so with:
+    ```sh
+    go mod init configbuilder
+    ```
+
+5. **Add External Package**: To add the required external package, use the `go get` command:
+    ```sh
+    go get github.com/AlecAivazis/survey/v2
+    ```
+
+6. **Tidy Module Dependencies**: After adding the external package, tidy your module to ensure all dependencies are correctly listed:
+    ```sh
+    go mod tidy
+    ```
+
+### Note on Standard Libraries
+
+The standard libraries (`fmt`, `os`, `os/exec`, `path/filepath`) are part of the Go standard library and do not require separate installation. They are available by default with your Go installation.
 
 ## Installation
 
@@ -26,42 +74,42 @@ If you don't have Go installed, follow these steps:
 Wget can usually be installed via your system's package manager:
 
 - On Debian-based systems (like Ubuntu):
-  ```sh
-  sudo apt-get install wget
-  ```
+    ```sh
+    sudo apt-get install wget
+    ```
 
 - On Red Hat-based systems (like Fedora):
-  ```sh
-  sudo yum install wget
-  ```
+    ```sh
+    sudo yum install wget
+    ```
 
 - On macOS (using Homebrew):
-  ```sh
-  brew install wget
-  ```
+    ```sh
+    brew install wget
+    ```
 
 ### Cloning the Repository
 
 Clone the repository containing the Nix Configuration Manager code:
-
 ```sh
 git clone https://github.com/soltros/configbuilder.git
 cd configbuilder
 ```
 
-
-
 ## Running the Program
 
 To run the program, navigate to the directory containing the code and execute:
-
 ```sh
 go run .
 ```
-
+This program is best built as a Go binary. You can build it yourself with:
+```sh
+go build configbuilder.go
+```
 This command will compile and run the program. Follow the on-screen prompts to select Nix modules and generate the `configuration.nix` file.
 
 ## Notes
 
+- If you wish to customize configbuilder.go, feel free. [Read the usage guide first](https://github.com/soltros/configbuilder/blob/main/USAGE.md).
 - Ensure you have proper permissions to create and modify files in `/etc/nixos/`.
 - Run the program with caution, especially in production environments, as it modifies system configuration files.
