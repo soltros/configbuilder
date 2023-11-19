@@ -61,11 +61,11 @@ The standard libraries (`fmt`, `os`, `os/exec`, `path/filepath`) are part of the
 
 ### Installing Go
 
-If you don't have Go installed, follow these steps:
+If you don't have Go installed, do:
 
-1. Download the Go installer from the [official Go downloads page](https://golang.org/dl/).
-2. Follow the installation instructions for your operating system provided on the Go website.
-
+```sh
+nix-env -iA go
+```
 ### Cloning the Repository
 
 Clone the repository containing the Nix Configuration Manager code:
