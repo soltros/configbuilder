@@ -145,4 +145,3 @@ func main() {
     createBackup()
     mainMenu()
 }
-
