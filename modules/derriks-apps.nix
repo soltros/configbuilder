@@ -4,6 +4,7 @@
   # Add packages to the system environment
   environment.systemPackages = with pkgs; [
 	bitwarden
+        git
         python312
         papirus-icon-theme
         gnome.dconf-editor
