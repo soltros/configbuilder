@@ -69,25 +69,6 @@ If you don't have Go installed, follow these steps:
 1. Download the Go installer from the [official Go downloads page](https://golang.org/dl/).
 2. Follow the installation instructions for your operating system provided on the Go website.
 
-### Installing Wget
-
-Wget can usually be installed via your system's package manager:
-
-- On Debian-based systems (like Ubuntu):
-    ```sh
-    sudo apt-get install wget
-    ```
-
-- On Red Hat-based systems (like Fedora):
-    ```sh
-    sudo yum install wget
-    ```
-
-- On macOS (using Homebrew):
-    ```sh
-    brew install wget
-    ```
-
 ### Cloning the Repository
 
 Clone the repository containing the Nix Configuration Manager code:
