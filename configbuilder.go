@@ -9,7 +9,7 @@ import (
     "github.com/AlecAivazis/survey/v2"
 )
 
-const githubRepoURL = "https://raw.githubusercontent.com/soltros/nixconfigs/main/desktop/"
+const githubRepoURL = "https://raw.githubusercontent.com/soltros/configbuilder/main/modules/"
 const nixosDir = "/etc/nixos/"
 
 var moduleChoices = []string{
