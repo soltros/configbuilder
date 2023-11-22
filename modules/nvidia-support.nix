@@ -17,5 +17,8 @@
 
   # Modesetting
   hardware.nvidia.modesetting.enable = true;
+
+ #Specify driver version
+ package = config.boot.kernelPackages.nvidiaPackages.beta;
 }
 
