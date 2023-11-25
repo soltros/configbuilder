@@ -41,7 +41,7 @@ var moduleChoices = []string{
     "garbagecollection.nix",
     "server.nix",
     "fish-shell-support.nix",
-    "flatpak-pantheon-fix.nix,"
+    "flatpak-pantheon-fix.nix",
 }
 
 func createBackup() {
