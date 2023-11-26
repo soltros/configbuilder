@@ -42,6 +42,7 @@ var moduleChoices = []string{
     "server.nix",
     "fish-shell-support.nix",
     "flatpak-pantheon-fix.nix",
+    "docker-support.nix",
 }
 
 func createBackup() {
