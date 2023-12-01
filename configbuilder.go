@@ -44,6 +44,7 @@ var moduleChoices = []string{
     "flatpak-pantheon-fix.nix",
     "docker-support.nix",
     "waydroid-support.nix",
+    "unsecure-packages.nix",
 }
 
 func createBackup() {
