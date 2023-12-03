@@ -2,123 +2,23 @@
 
 # Define variables
 JOVIAN_ZIP_URL="https://github.com/Jovian-Experiments/Jovian-NixOS/archive/refs/heads/development.zip"
-JOVIAN_DIR="Jovian-NixOS"
-CONFIGURATION_FILE="configuration.nix"
-LIVECD_CONFIG_FILE="livecd.nix"
+JOVIAN_DIR="Jovian-NixOS-development"
+FLAKE_PATH="${JOVIAN_DIR}#nixosConfigurations.example-module.config.system.build.isoImage"
+# Replace 'example-module' with the actual name of the module you want to use for the Live CD
 
 # Download and extract the Jovian-NixOS-development.zip file
 wget $JOVIAN_ZIP_URL -O jovian-nixos.zip
-unzip jovian-nixos.zip -d .
-JOVIAN_DIR="$(pwd)/Jovian-NixOS-development" # Adjust based on the actual directory structure in the ZIP
+unzip jovian-nixos.zip
 
-# Create the custom configuration.nix file
-cat > $CONFIGURATION_FILE << EOF
-{ config, pkgs, lib, ... }:
+# Use the correct name of the directory after extraction
+JOVIAN_DIR="$(find . -maxdepth 1 -type d -name 'Jovian-NixOS-development*' -print -quit)"
+FLAKE_PATH="${JOVIAN_DIR}#nixosConfigurations.example-module.config.system.build.isoImage"
 
-let
-  myUsername = "deck";
-  myUserdescription = "SteamOS";
-  jovian-nixos = import "${JOVIAN_DIR}"; # Use the absolute path
-in {
-  imports = [ "\${jovian-nixos}/modules" ]; 
+# Generate the ISO using the flake
+nix build --no-link "$FLAKE_PATH"
 
-  jovian = {
-    steam.enable = true;
-    devices.steamdeck = {
-      enable = true;
-    };
-  };
+# Move the resulting ISO to the current directory
+mv $(find /nix/store -name '*.iso' -print -quit) ./jovian-nixos-livecd.iso
 
-  services.xserver.displayManager.gdm.wayland = lib.mkForce true;
-  services.xserver.displayManager.defaultSession = "gamescope-wayland";
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = myUsername;
-
-  sound.enable = true;
-  services.xserver.desktopManager.gnome = {
-    enable = true;
-  };
-
-  users.users.\${myUsername} = {
-    isNormalUser = true;
-    description = myUserdescription;
-  };
-
-  systemd.services.gamescope-switcher = {
-    wantedBy = [ "graphical.target" ];
-    serviceConfig = {
-      User = 1000;
-      PAMName = "login";
-      WorkingDirectory = "~";
-
-      TTYPath = "/dev/tty7";
-      TTYReset = "yes";
-      TTYVHangup = "yes";
-      TTYVTDisallocate = "yes";
-
-      StandardInput = "tty-fail";
-      StandardOutput = "journal";
-      StandardError = "journal";
-
-      UtmpIdentifier = "tty7";
-      UtmpMode = "user";
-
-      Restart = "always";
-    };
-
-    script = ''
-      set-session () {
-        mkdir -p ~/.local/state
-        >~/.local/state/steamos-session-select echo "$1"
-      }
-      consume-session () {
-        if [[ -e ~/.local/state/steamos-session-select ]]; then
-          cat ~/.local/state/steamos-session-select
-          rm ~/.local/state/steamos-session-select
-        else
-          echo "gamescope"
-        fi
-      }
-      while :; do
-        session=$(consume-session)
-        case "$session" in
-          plasma)
-            dbus-run-session -- gnome-shell --display-server --wayland
-            ;;
-          gamescope)
-            steam-session
-            ;;
-        esac
-      done
-    '';
-  };
-
-  environment.systemPackages = with pkgs; [
-    gnome.gnome-terminal
-    jupiter-dock-updater-bin
-    steamdeck-firmware
-  ];
-}
-EOF
-
-# Create the livecd.nix file
-cat > $LIVECD_CONFIG_FILE << EOF
-{ config, pkgs, ... }:
-
-{
-  imports = [
-    ./$CONFIGURATION_FILE
-  ];
-
-  boot.supportedFilesystems = [ "ext4" ];
-  services.xserver.enable = true;
-  networking.networkmanager.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    # Additional packages
-  ];
-}
-EOF
-
-# Build the Live CD
-nix-shell -p nixos-generators --run "nixos-generate -f iso -c $LIVECD_CONFIG_FILE"
+# Output the location of the ISO
+echo "Live CD ISO created at $(pwd)/jovian-nixos-livecd.iso"
