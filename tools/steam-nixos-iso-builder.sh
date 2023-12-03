@@ -1,13 +1,15 @@
 #!/bin/bash
 
 # Define variables
+JOVIAN_ZIP_URL="https://github.com/Jovian-Experiments/Jovian-NixOS/archive/refs/heads/development.zip"
 JOVIAN_DIR="Jovian-NixOS"
-JOVIAN_ZIP="/path/to/Jovian-NixOS-development.zip" # Replace with the actual path to the zip file
 CONFIGURATION_FILE="configuration.nix"
 LIVECD_CONFIG_FILE="livecd.nix"
 
-# Extract the Jovian-NixOS-development.zip file
-unzip $JOVIAN_ZIP -d $JOVIAN_DIR
+# Download and extract the Jovian-NixOS-development.zip file
+wget $JOVIAN_ZIP_URL -O jovian-nixos.zip
+unzip jovian-nixos.zip -d .
+JOVIAN_DIR="$(pwd)/Jovian-NixOS-development" # Adjust based on the actual directory structure in the ZIP
 
 # Create the custom configuration.nix file
 cat > $CONFIGURATION_FILE << EOF
@@ -16,9 +18,9 @@ cat > $CONFIGURATION_FILE << EOF
 let
   myUsername = "deck";
   myUserdescription = "SteamOS";
-  jovian-nixos = import "${JOVIAN_DIR}"; # Import the local Jovian-NixOS directory
+  jovian-nixos = import "${JOVIAN_DIR}"; # Use the absolute path
 in {
-  imports = [ "\${jovian-nixos}/modules" ];
+  imports = [ "\${jovian-nixos}/modules" ]; 
 
   jovian = {
     steam.enable = true;
