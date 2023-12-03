@@ -53,7 +53,7 @@ The app uses the following Go standard libraries and an external package:
     go mod tidy
     ```
 ### Note on steam-deck-support.nix
-The Steam Deck module is still being ironed out. Use at your own risk.
+The Steam Deck module is still being ironed out. Use at your own risk. Note that the main NixOS ISO available on the website may not boot on your Steam Deck. You may need to generate an ISO with the SteamOS modules built into the kernel. Use the Steam NixOS ISO builder [script](https://github.com/soltros/configbuilder/blob/main/tools/steam-nixos-iso-builder.sh). This tool will add the [steam-deck-support.nix](https://github.com/soltros/configbuilder/blob/main/modules/steam-deck-support.nix) module, and everything needed to run Steam OS into the live disk.  
 
 ### Note on Standard Libraries
 
