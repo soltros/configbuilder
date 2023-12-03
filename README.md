@@ -53,7 +53,7 @@ The app uses the following Go standard libraries and an external package:
     go mod tidy
     ```
 ### Note on steam-deck-support.nix
-The Steam Deck module is still being ironed out. As of now, everything compiles as it should, but the SteamOS session fails to load. Use at your own risk.
+The Steam Deck module is still being ironed out. Use at your own risk.
 
 ### Note on Standard Libraries
 
