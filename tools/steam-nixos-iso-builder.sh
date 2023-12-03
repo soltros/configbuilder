@@ -1,23 +1,13 @@
 #!/bin/bash
 
 # Define variables
+JOVIAN_DIR="Jovian-NixOS"
+JOVIAN_ZIP="/path/to/Jovian-NixOS-development.zip" # Replace with the actual path to the zip file
 CONFIGURATION_FILE="configuration.nix"
 LIVECD_CONFIG_FILE="livecd.nix"
-LIVECD_OUTPUT="nixos-livecd.iso"
 
-# Check for Nix installation
-if ! command -v nix-shell &> /dev/null
-then
-    echo "Nix is not installed. Please install Nix and try again."
-    exit 1
-fi
-
-# Check for nixos-generators installation
-if ! nix-shell -p nixos-generators --run "echo 'nixos-generators installed'" &> /dev/null
-then
-    echo "nixos-generators is not installed. Installing..."
-    nix-shell -p nixos-generators
-fi
+# Extract the Jovian-NixOS-development.zip file
+unzip $JOVIAN_ZIP -d $JOVIAN_DIR
 
 # Create the custom configuration.nix file
 cat > $CONFIGURATION_FILE << EOF
@@ -26,13 +16,86 @@ cat > $CONFIGURATION_FILE << EOF
 let
   myUsername = "deck";
   myUserdescription = "SteamOS";
-  jovian-nixos = builtins.fetchGit {
-    url = "https://github.com/Jovian-Experiments/Jovian-NixOS";
-    ref = "development";
-  };
+  jovian-nixos = import "${JOVIAN_DIR}"; # Import the local Jovian-NixOS directory
 in {
   imports = [ "\${jovian-nixos}/modules" ];
-  # ... (Rest of your module code here)
+
+  jovian = {
+    steam.enable = true;
+    devices.steamdeck = {
+      enable = true;
+    };
+  };
+
+  services.xserver.displayManager.gdm.wayland = lib.mkForce true;
+  services.xserver.displayManager.defaultSession = "gamescope-wayland";
+  services.xserver.displayManager.autoLogin.enable = true;
+  services.xserver.displayManager.autoLogin.user = myUsername;
+
+  sound.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+  };
+
+  users.users.${myUsername} = {
+    isNormalUser = true;
+    description = myUserdescription;
+  };
+
+  systemd.services.gamescope-switcher = {
+    wantedBy = [ "graphical.target" ];
+    serviceConfig = {
+      User = 1000;
+      PAMName = "login";
+      WorkingDirectory = "~";
+
+      TTYPath = "/dev/tty7";
+      TTYReset = "yes";
+      TTYVHangup = "yes";
+      TTYVTDisallocate = "yes";
+
+      StandardInput = "tty-fail";
+      StandardOutput = "journal";
+      StandardError = "journal";
+
+      UtmpIdentifier = "tty7";
+      UtmpMode = "user";
+
+      Restart = "always";
+    };
+
+    script = ''
+      set-session () {
+        mkdir -p ~/.local/state
+        >~/.local/state/steamos-session-select echo "$1"
+      }
+      consume-session () {
+        if [[ -e ~/.local/state/steamos-session-select ]]; then
+          cat ~/.local/state/steamos-session-select
+          rm ~/.local/state/steamos-session-select
+        else
+          echo "gamescope"
+        fi
+      }
+      while :; do
+        session=$(consume-session)
+        case "$session" in
+          plasma)
+            dbus-run-session -- gnome-shell --display-server --wayland
+            ;;
+          gamescope)
+            steam-session
+            ;;
+        esac
+      done
+    '';
+  };
+
+  environment.systemPackages = with pkgs; [
+    gnome.gnome-terminal
+    jupiter-dock-updater-bin
+    steamdeck-firmware
+  ];
 }
 EOF
 
@@ -56,13 +119,4 @@ cat > $LIVECD_CONFIG_FILE << EOF
 EOF
 
 # Build the Live CD
-echo "Building NixOS Live CD..."
-nix-shell -p nixos-generators --run "nixos-generate -f iso -c $LIVECD_CONFIG_FILE -o $LIVECD_OUTPUT"
-
-# Check if ISO was created successfully
-if [ -f "$LIVECD_OUTPUT" ]; then
-    echo "NixOS Live CD created successfully: $LIVECD_OUTPUT"
-else
-    echo "Failed to create NixOS Live CD."
-    exit 1
-fi
+nix-shell -p nixos-generators --run "nixos-generate -f iso -c $LIVECD_CONFIG_FILE"
