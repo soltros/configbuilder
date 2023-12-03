@@ -45,6 +45,7 @@ var moduleChoices = []string{
     "docker-support.nix",
     "waydroid-support.nix",
     "unsecure-packages.nix",
+    "steam-deck-support.nix",
 }
 
 func createBackup() {
