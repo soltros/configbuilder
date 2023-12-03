@@ -37,7 +37,7 @@ in {
     enable = true;
   };
 
-  users.users.${myUsername} = {
+  users.users.\${myUsername} = {
     isNormalUser = true;
     description = myUserdescription;
   };
