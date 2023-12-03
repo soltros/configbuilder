@@ -46,6 +46,7 @@ var moduleChoices = []string{
     "waydroid-support.nix",
     "unsecure-packages.nix",
     "steam-deck-support.nix",
+    "flake-support.nix",
 }
 
 func createBackup() {
