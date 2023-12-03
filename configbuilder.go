@@ -113,7 +113,7 @@ func generateConfigurationNix(selectedModules []string) {
 
   # This value determines the NixOS release with which your system is to be compatible.
   # Update it according to your NixOS version.
-  system.stateVersion = "23.05"; # Edit according to your NixOS version
+  system.stateVersion = "23.11"; # Edit according to your NixOS version
 }
 `
 
