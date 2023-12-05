@@ -1,9 +1,6 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, home-manager, ... }:
 
 let
-  myUsername = "deck";
-  myUserdescription = "SteamOS";
-
   # Fetch the "development" branch of the Jovian-NixOS repository
   jovian-nixos = builtins.fetchGit {
     url = "https://github.com/Jovian-Experiments/Jovian-NixOS";
@@ -11,8 +8,10 @@ let
   };
 
 in {
-  # Import jovian modules
-  imports = [ "${jovian-nixos}/modules" ]; 
+  imports = [
+    "${jovian-nixos}/modules"
+    home-manager.nixosModule
+  ];
 
   jovian = {
     steam.enable = true;
@@ -24,7 +23,7 @@ in {
   services.xserver.displayManager.gdm.wayland = lib.mkForce true;
   services.xserver.displayManager.defaultSession = "gamescope-wayland";
   services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = myUsername;
+  services.xserver.displayManager.autoLogin.user = "deck";
 
   # Enable GNOME
   sound.enable = true;
@@ -32,10 +31,10 @@ in {
     enable = true;
   };
 
-  # Create user
-  users.users.myUsername = {
+  # Create user "deck"
+  users.users.deck = {
     isNormalUser = true;
-    description = myUserdescription;
+    description = "SteamOS";
   };
 
   systemd.services.gamescope-switcher = {
@@ -91,5 +90,18 @@ in {
     gnome.gnome-terminal
     jupiter-dock-updater-bin
     steamdeck-firmware
+    home-manager
   ];
+
+  # GNOME settings through home-manager
+  home-manager.users.deck = {
+    dconf.settings = {
+      "org/gnome/desktop/a11y/applications" = {
+        screen-keyboard-enabled = true; # Enable on-screen keyboard
+      };
+      "org/gnome/shell" = {
+        favorite-apps = ["steam.desktop"];
+      };
+    };
+  };
 }
