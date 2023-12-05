@@ -47,6 +47,7 @@ var moduleChoices = []string{
     "unsecure-packages.nix",
     "steam-deck-support.nix",
     "flake-support.nix",
+    "kde-plasma-gtk.nix",
 }
 
 func createBackup() {
