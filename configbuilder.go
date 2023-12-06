@@ -48,6 +48,12 @@ var moduleChoices = []string{
     "steam-deck-support.nix",
     "flake-support.nix",
     "kde-plasma-gtk.nix",
+    "swapfile.nix",
+    "zram-swapfile.nix",
+    "automatic-updater.nix",
+    "nixos-hardened.nix",
+    "energy-savings.nix",
+    
 }
 
 func createBackup() {
