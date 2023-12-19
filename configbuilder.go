@@ -19,6 +19,7 @@ var moduleChoices = []string{
     "deepin.nix",
     "derriks-apps.nix",
     "gnome-shell.nix",
+    "gnome-flatpak-fix.nix",
     "intel-support.nix",
     "kde-flatpak-fix.nix",
     "kde-plasma.nix",
