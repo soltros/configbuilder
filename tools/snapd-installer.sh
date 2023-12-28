@@ -2,7 +2,7 @@
 
 
 ## Upgrade NixOS to Unstable.
-echo "Running this installer assumes you have snapd.nix from Configbuilder enabled. "
+echo "Running this installer assumes you have do not have snapd.nix from Configbuilder enabled. Your system will not build with this enabled. Please enable snapd.nix once everything is done. "
 xdg-open https://raw.githubusercontent.com/soltros/configbuilder/main/modules/snapd.nix
 xdg-open https://github.com/soltros/configbuilder
 echo " "
