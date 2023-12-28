@@ -24,6 +24,7 @@ var moduleChoices = []string{
     "kde-flatpak-fix.nix",
     "kde-plasma.nix",
     "mate.nix",
+    "lxqt.nix",
     "networking.nix",
     "nvidia-support.nix",
     "pantheon-packages.nix",
