@@ -44,6 +44,7 @@ var moduleChoices = []string{
     "server.nix",
     "fish-shell-support.nix",
     "flatpak-pantheon-fix.nix",
+    "snapd.nix",
     "docker-support.nix",
     "waydroid-support.nix",
     "unsecure-packages.nix",
