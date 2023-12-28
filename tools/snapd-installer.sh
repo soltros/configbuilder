@@ -3,6 +3,8 @@
 
 ## Upgrade NixOS to Unstable.
 echo "Running this installer assumes you have snapd.nix from Configbuilder enabled. "
+xdg-open https://raw.githubusercontent.com/soltros/configbuilder/main/modules/snapd.nix
+xdg-open https://github.com/soltros/configbuilder
 echo " "
 echo "Snap packages for NixOS requires NixOS Unstable. Upgrading...."
 sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
