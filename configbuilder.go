@@ -14,9 +14,11 @@ const nixosDir = "/etc/nixos/"
 
 var moduleChoices = []string{
     "bootloader.nix",
+    "bootloader-mbr.nix",
     "budgie.nix",
     "cinnamon.nix",
     "deepin.nix",
+    "enlightenment.nix",
     "derriks-apps.nix",
     "gnome-shell.nix",
     "gnome-flatpak-fix.nix",
