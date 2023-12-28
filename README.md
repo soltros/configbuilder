@@ -55,6 +55,11 @@ The app uses the following Go standard libraries and an external package:
 ### Note on steam-deck-support.nix
 The Steam Deck module is still being ironed out. Use at your own risk. 
 
+### Note on Snap package support via snapd.nix
+As of now, configbuilder supports setting up Snap packages on NixOS, via the [nix-snapd](https://github.com/io12/nix-snapd) project. However, before you can enable [snapd.nix](https://github.com/soltros/configbuilder/blob/main/modules/snapd.nix}, you must run the installation tool. This tool will download the nix-snapd module, upgrade your NixOS system to Unstable, and build it. You can run the installer directly with the command below. 
+
+`curl https://raw.githubusercontent.com/soltros/configbuilder/main/tools/snapd-installer.sh | sh`
+
 ### Note on Standard Libraries
 
 The standard libraries (`fmt`, `os`, `os/exec`, `path/filepath`) are part of the Go standard library and do not require separate installation. They are available by default with your Go installation.
