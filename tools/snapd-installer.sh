@@ -2,8 +2,9 @@
 
 
 ## Upgrade NixOS to Unstable.
-echo "Running this installer assumes you have do not have snapd.nix from Configbuilder enabled. Your system will not build with this enabled. Please enable snapd.nix once everything is done. "
-echo "Ensure you have flake-support.nix enabled to build."
+echo "Running this installer assumes you have snapd.nix from Configbuilder enabled. "
+xdg-open https://raw.githubusercontent.com/soltros/configbuilder/main/modules/snapd.nix
+echo " "
 echo "Snap packages for NixOS requires NixOS Unstable. Upgrading...."
 sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
 sudo nix-channel --update
@@ -17,3 +18,4 @@ cd nix-snapd/
 
 ## Build the module
 sudo nix build
+
