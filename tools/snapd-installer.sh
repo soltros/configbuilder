@@ -10,6 +10,7 @@ ask_hostname() {
 
 # Function to download the Nix-Snapd files
 download_nix_snapd() {
+    cd ~/
     git clone https://github.com/io12/nix-snapd.git
 }
 
