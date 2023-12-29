@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Global variable to store the hostname
+HOSTNAME=""
+
+# Function to ask the user for their hostname and store it
+ask_hostname() {
+    read -p "Enter the new hostname: " HOSTNAME
+}
+
 # Function to download the Nix-Snapd files
 download_nix_snapd() {
     git clone https://github.com/io12/nix-snapd.git
@@ -17,18 +25,30 @@ upgrade_nixos() {
 
 # Function to set up the flake
 setup_flake() {
-    read -p "Enter the new hostname: " new_hostname
+    flake_content="{
+  description = \"NixOS configuration\";
 
-    flake_content='{
-      description = "NixOS configuration";
-      ... # (rest of the flake content)
-    }'
+  inputs = {
+    nixpkgs.url = \"github:NixOS/nixpkgs/nixos-unstable\";
+    nix-snapd.url = \"github:io12/nix-snapd\";
+    nix-snapd.inputs.nixpkgs.follows = \"nixpkgs\";
+  };
+
+  outputs = { nixpkgs, nix-snapd }: {
+    nixosConfigurations.$HOSTNAME = nixpkgs.lib.nixosSystem {
+      system = \"x86_64-linux\";
+      modules = [
+        nix-snapd.nixosModules.default
+        {
+          services.snap.enable = true;
+        }
+      ];
+    };
+  };
+}"
 
     echo "$flake_content" > $HOME/nix-snapd/flake.nix
-
-    FLAKE_FILE="$HOME/nix-snapd/flake.nix"
-    sed -i "s/my-hostname/$new_hostname/g" "$FLAKE_FILE"
-    echo "flake.nix has been updated with the new hostname: $new_hostname"
+    echo "flake.nix has been updated with the new hostname: $HOSTNAME"
 }
 
 # Function to build the module
@@ -36,6 +56,9 @@ build_module() {
     cd nix-snapd/
     nix build
 }
+
+# Ask the user for their hostname at the start
+ask_hostname
 
 # Menu
 while true; do
