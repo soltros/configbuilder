@@ -56,7 +56,7 @@ setup_flake() {
 
 # Function to build the module
 build_module() {
-    cd nix-snapd/
+    cd ~/nix-snapd/
     nix build
 }
 
