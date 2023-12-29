@@ -46,7 +46,7 @@ setup_flake() {
     };
   };
 }"
-
+    touch $HOME/nix-snapd/flake.nix
     echo "$flake_content" > $HOME/nix-snapd/flake.nix
     echo "flake.nix has been updated with the new hostname: $HOSTNAME"
 }
