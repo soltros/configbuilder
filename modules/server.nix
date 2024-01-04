@@ -10,12 +10,7 @@
       # Additional Docker configurations can be added here
     };
 
-    # Plex Media Server configuration
-    plex = {
-      enable = true;
-      openFirewall = true;
-      # Customize Plex settings as needed
-    };
+    # Remove Plex Media Server configuration
 
     # Add other common server services as required:
     # Nginx or Apache for web serving, Samba for file sharing,
