@@ -3,13 +3,7 @@
 {
   # System configuration
   services = {
-
-    # Docker configuration
-    docker = {
-      enable = true;
-      # Additional Docker configurations can be added here
-    };
-
+    
     # Add other common server services as required:
     # Nginx or Apache for web serving, Samba for file sharing,
     # Postfix for a mail server, Syncthing for file synchronization, etc.
