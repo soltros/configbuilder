@@ -2,35 +2,31 @@
 
 {
   # Environment setup for Nextcloud admin and database passwords
-  environment.etc."nextcloud-admin-pass".text = "YOUR_NEXTCLOUD_ADMIN_PASSWORD";
-  environment.etc."nextcloud-db-pass".text = "YOUR_NEXTCLOUD_DB_PASSWORD";
+  environment.etc."nextcloud-admin-pass".text = "SECURE_PASSWORD_HERE";
+  environment.etc."nextcloud-db-pass".text = "SECURE_PASSWORD_HERE";
 
   # PostgreSQL service configuration
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_14;  # Adjust the PostgreSQL version as needed
     initialScript = pkgs.writeText "nextcloud-db-init.sql" ''
-      CREATE ROLE nextcloud WITH LOGIN PASSWORD 'YOUR_NEXTCLOUD_DB_ROLE_PASSWORD';
+      CREATE ROLE nextcloud WITH LOGIN PASSWORD 'SECURE_PASSWORD_HERE';
       CREATE DATABASE nextcloud WITH OWNER nextcloud;
     '';
   };
 
   # PHP-FPM service configuration for Nextcloud
-  services.phpfpm.pools = {
-    nextcloud = {
-      user = "nextcloud";
-      group = "nextcloud";
-      listen = "/run/phpfpm/nextcloud.sock";
-      listen.owner = "nextcloud";
-      listen.group = "nextcloud";
-      phpOptions = ''
-        upload_max_filesize = 1G
-        post_max_size = 1G
-        memory_limit = 512M
-        max_execution_time = 300
-        date.timezone = "America/Detroit"
-      '';
-    };
+  services.phpfpm.pools.nextcloud = {
+    user = "nextcloud";
+    group = "nextcloud";
+    listen = "/run/phpfpm/nextcloud.sock";
+    phpOptions = ''
+      upload_max_filesize = 1G
+      post_max_size = 1G
+      memory_limit = 512M
+      max_execution_time = 300
+      date.timezone = "America/Detroit"
+    '';
   };
 
   # Nextcloud service configuration
@@ -47,7 +43,6 @@
       # Additional Nextcloud configuration...
     };
     maxUploadSize = "1G"; # Adjust for max upload size
-    phpFpm.pool = "nextcloud";
   };
 
   # Other services and configuration...
