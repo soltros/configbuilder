@@ -15,6 +15,24 @@
     '';
   };
 
+  # PHP-FPM service configuration for Nextcloud
+  services.phpfpm.pools = {
+    nextcloud = {
+      user = config.services.nextcloud.config.user;
+      group = config.services.nextcloud.config.group;
+      listen = "/run/phpfpm/nextcloud.sock";
+      listen.owner = config.services.nextcloud.config.user;
+      listen.group = config.services.nextcloud.config.group;
+      phpOptions = ''
+        upload_max_filesize = 1G
+        post_max_size = 1G
+        memory_limit = 512M
+        max_execution_time = 300
+        date.timezone = "UTC"
+      '';
+    };
+  };
+
   # Nextcloud service configuration
   services.nextcloud = {
     enable = true;
@@ -28,9 +46,10 @@
       adminpassFile = "/etc/nextcloud-admin-pass";
       # Additional Nextcloud configuration...
     };
-     services.nextcloud.maxUploadSize = "1G"; # Adjust for max upload size. Ensure that you've also configured PHP.
+    maxUploadSize = "1G"; # Adjust for max upload size
+    # Link the PHP-FPM pool to the Nextcloud service
+    phpFpm.pool = "nextcloud";
   };
 
   # Other services and configuration...
-  
 }
