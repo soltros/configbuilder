@@ -2,15 +2,15 @@
 
 {
   # Environment setup for Nextcloud admin and database passwords
-  environment.etc."nextcloud-admin-pass".text = "1derrik1";
-  environment.etc."nextcloud-db-pass".text = "1derrik1";
+  environment.etc."nextcloud-admin-pass".text = "YOUR_NEXTCLOUD_ADMIN_PASSWORD";
+  environment.etc."nextcloud-db-pass".text = "YOUR_NEXTCLOUD_DB_PASSWORD";
 
   # PostgreSQL service configuration
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_14;  # Adjust the PostgreSQL version as needed
     initialScript = pkgs.writeText "nextcloud-db-init.sql" ''
-      CREATE ROLE nextcloud WITH LOGIN PASSWORD '1derrik1';
+      CREATE ROLE nextcloud WITH LOGIN PASSWORD 'YOUR_NEXTCLOUD_DB_ROLE_PASSWORD';
       CREATE DATABASE nextcloud WITH OWNER nextcloud;
     '';
   };
