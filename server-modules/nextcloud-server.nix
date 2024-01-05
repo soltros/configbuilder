@@ -19,7 +19,7 @@
   services.phpfpm.pools.nextcloud = {
     user = "nextcloud";
     group = "nextcloud";
-    listen = "/run/phpfpm/nextcloud.sock";
+   # listen = "/run/phpfpm/nextcloud.sock"; - Deprecated
     phpOptions = ''
       upload_max_filesize = 1G
       post_max_size = 1G
