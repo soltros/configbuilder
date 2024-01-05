@@ -90,6 +90,8 @@ go run .
 This program is best built as a Go binary. You can build it yourself with:
 ```sh
 go build configbuilder.go
+
+go build configbuilder-server.go
 ```
 This command will compile and run the program. Follow the on-screen prompts to select Nix modules and generate the `configuration.nix` file.
 
