@@ -28,7 +28,7 @@
       adminpassFile = "/etc/nextcloud-admin-pass";
       # Additional Nextcloud configuration...
     };
-   services.nextcloud.maxUploadSize = "1G"; # Adjust for max upload size. Ensure that you've also configured PHP.
+     services.nextcloud.maxUploadSize = "1G"; # Adjust for max upload size. Ensure that you've also configured PHP.
   };
 
   # Other services and configuration...
