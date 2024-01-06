@@ -3,8 +3,8 @@
   services.syncthing = {
     enable = true;
     user = "derrik"; # Replace with your preferred user
-    dataDir = "/mnt/merged/containers/syncthing/data1"; # Adjust as per your setup
-    configDir = "/mnt/merged/containers/syncthing/config"; # Adjust as per your setup
+    dataDir = "/mnt/merged/syncthing/data1"; # Adjust as per your setup
+    configDir = "/mnt/merged/syncthing/config"; # Adjust as per your setup
 
     extraOptions = {
       environment.PUID = "1000";
@@ -21,9 +21,9 @@
     settings = {
       overrideFolders = true;
       folders = {
-        "data1" = { path = "/mnt/merged/containers/syncthing/data1"; };
-        "data2" = { path = "/mnt/merged/containers/syncthing/data2"; };
-        "backups" = { path = "/mnt/merged/containers/syncthing/backups"; };
+        "data1" = { path = "/mnt/merged/syncthing/data1"; };
+        "data2" = { path = "/mnt/merged/syncthing/data2"; };
+        "backups" = { path = "/mnt/merged/syncthing/backups"; };
       };
     };
   };
