@@ -1,24 +1,23 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   services.syncthing = {
     enable = true;
-    user = "derrik"; # Replace with your preferred user
-    dataDir = "/mnt/merged/syncthing/data1"; # Adjust as per your setup
-    configDir = "/mnt/merged/syncthing/config"; # Adjust as per your setup
+    user = "derrik";
+    dataDir = "/mnt/merged/syncthing/data1";
+    configDir = "/mnt/merged/syncthing/config";
 
-    extraOptions = {
+    settings = {
       environment.PUID = "1000";
       environment.PGID = "1000";
       environment.TZ = "America/Detroit";
 
       gui = {
         address = "0.0.0.0:8384";
-        user = "username"; # Set your GUI username
-        password = "password"; # Set your GUI password
+        user = "admin";
+        password = "YOUR_SECURE_PASSWORD";
       };
-    };
 
-    settings = {
+      # Include your folder configurations here
       overrideFolders = true;
       folders = {
         "data1" = { path = "/mnt/merged/syncthing/data1"; };
@@ -30,5 +29,9 @@
 
   networking.firewall.allowedTCPPorts = [ 8384 22000 ];
   networking.firewall.allowedUDPPorts = [ 21027 22000 ];
-}
 
+  systemd.services.syncthing.serviceConfig.ExecStart = lib.mkForce [
+    ""
+    "${pkgs.syncthing}/bin/syncthing -no-browser -gui-address=0.0.0.0:8384 -config=/mnt/merged/syncthing/config -data=/mnt/merged/syncthing/data1"
+  ];
+}
