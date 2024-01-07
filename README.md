@@ -71,7 +71,7 @@ The standard libraries (`fmt`, `os`, `os/exec`, `path/filepath`) are part of the
 If you don't have Go installed, do:
 
 ```sh
-nix-env -iA go
+nix-env -iA nixos.go
 ```
 ### Cloning the Repository
 
