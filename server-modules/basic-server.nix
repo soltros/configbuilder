@@ -15,12 +15,6 @@
       # Samba specific configurations
     };
 
-    # OpenSSH Server for secure remote access
-    openssh = {
-      enable = true;
-      # SSH specific configurations
-    };
-
     # PostgreSQL Database Server
     postgresql = {
       enable = true;
@@ -39,22 +33,10 @@
       # Logrotate specific configurations
     };
 
-    # Dovecot IMAP Server
-    dovecot = {
-      enable = true;
-      # Dovecot specific configurations
-    };
-
     # Cron for scheduled tasks
     cron = {
       enable = true;
       # Cron specific configurations
-    };
-
-    # Syncthing for file synchronization
-    syncthing = {
-      enable = true;
-      # Syncthing specific configurations
     };
 
     # BorgBackup for backups
