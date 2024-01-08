@@ -21,12 +21,6 @@
       # PostgreSQL specific configurations
     };
 
-    # Docker Container Management
-    docker = {
-      enable = true;
-      # Docker specific configurations
-    };
-
     # Logrotate for log management
     logrotate = {
       enable = true;
@@ -37,18 +31,6 @@
     cron = {
       enable = true;
       # Cron specific configurations
-    };
-
-    # BorgBackup for backups
-    borgbackup = {
-      enable = true;
-      # BorgBackup specific configurations
-    };
-
-    # Firewall Configuration
-    firewall = {
-      enable = true;
-      # Firewall rules and configurations
     };
 
     # Apache Web Server (optional alternative to Nginx)
