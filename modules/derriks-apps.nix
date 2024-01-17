@@ -27,11 +27,10 @@
 	kate
 	thunderbird
 	ntfs3g
-	kdenlive
+	appimage-run
 	firefox
 	flatpak
 	mullvad
 	discord
-        trayscale
   ];
 }
