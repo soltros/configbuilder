@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Custom NixOS ISO Creation Script
+# Allow Broken
+export NIXPKGS_ALLOW_BROKEN=1
 
 # Path to the custom hardware configuration file
 CUSTOM_HW_CONFIG="custom_hardware.nix"
