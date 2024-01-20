@@ -16,6 +16,7 @@ var moduleChoices = []string{
     "bootloader.nix",
     "bootloader-mbr.nix",
     "bootloader-systemdboot.nix",
+    "bcachefs-support.nix",
     "budgie.nix",
     "cinnamon.nix",
     "deepin.nix",
