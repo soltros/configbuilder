@@ -13,5 +13,10 @@
   # Use the latest Linux kernel supporting Bcachefs
   #boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  # Include bcachefs-tools 
+  environment.systemPackages = with pkgs; [
+    bcachefs-tools
+  ];
+
   # Additional configurations can be added here
 }
