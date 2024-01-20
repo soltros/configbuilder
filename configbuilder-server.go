@@ -16,6 +16,7 @@ var moduleChoices = []string{
     "bootloader.nix",
     "bootloader-mbr.nix",
     "bootloader-systemdboot.nix",
+    "bcachefs-support.nix",
     "networking.nix",
     "podman-support.nix",
     "tailscale-support.nix",
