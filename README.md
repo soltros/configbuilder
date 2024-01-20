@@ -57,7 +57,8 @@ The Steam Deck module is still being ironed out. Use at your own risk.
 
 ### Note on BcacheFS support:
 If you wish to install NixOS with BcacheFS, you need kernel 6.7, and the nixos.bcachefs-tools package. The current NixOS ISO ships with 6.1. As a result, you must generate your own ISO. Run this script to do that:
-`` curl https://raw.githubusercontent.com/soltros/configbuilder/main/tools/bcachfs-iso-builder.sh | sh``
+
+``curl https://raw.githubusercontent.com/soltros/configbuilder/main/tools/bcachfs-iso-builder.sh | sh``
 
 ### Note on Snap package support via snapd.nix
 As of now, configbuilder supports setting up Snap packages on NixOS, via the [nix-snapd](https://github.com/io12/nix-snapd) project. However, before you can enable [snapd.nix](https://github.com/soltros/configbuilder/blob/main/modules/snapd.nix), you must run the installation tool. This tool will download the nix-snapd module, upgrade your NixOS system to Unstable, and build it. You can run the installer directly with the command below. 
