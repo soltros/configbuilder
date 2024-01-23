@@ -1,20 +1,17 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
+let
+  nix-software-center = import (pkgs.fetchFromGitHub {
+    owner = "snowfallorg";
+    repo = "nix-software-center";
+    rev = "0.1.2";
+    sha256 = "xiqF1mP8wFubdsAQ1BmfjzCgOD3YZf7EGWl9i69FTls=";
+  }) {};
+in
 {
-  options.services.nix-software-center = {
-    enable = mkEnableOption "nix-software-center";
+  environment.systemPackages = with pkgs; [
+    nix-software-center
+    # Add other packages here
+  ];
 
-    package = mkOption {
-      type = types.package;
-      default = pkgs.nix-software-center;
-      description = "The nix-software-center package to use.";
-    };
-  };
-
-  config = mkIf config.services.nix-software-center.enable {
-    environment.systemPackages = [ config.services.nix-software-center.package ];
-
-    # Additional configuration can be added here
-    # For example, setting up any required services or dependencies
-  };
+  # Additional configurations can be added here
 }
