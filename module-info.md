@@ -1,0 +1,87 @@
+# Detailed Modules Description
+
+## Modules
+- **automatic-updater.nix**: Enable automatic updates. enable = true;. systemd.services.nixos-upgrade = {
+- **bcachefs-support.nix**: Enable filesystem support for bcachefs. Specify the file system configuration. Use the latest linux kernel supporting bcachefs. Boot.kernelpackages = pkgs.linuxpackages_latest;. Include bcachefs-tools
+- **bootloader-mbr.nix**: Enables the grub bootloader.. boot.loader.grub.enable = true;. Specifies the device for the grub bootloader installation.. Replace '/dev/sdx' with the appropriate device identifier, e.g., '/dev/sda'.. Specifies that the system is not efi-based.
+- **bootloader-systemdboot.nix**: Enable systemd-boot as the bootloader. boot.loader.systemd-boot.enable = true;. Allow the bootloader to modify efi variables. Additional configurations can be added here
+- **bootloader.nix**: boot.loader.systemd-boot.enable = false;. boot.loader.grub.enable = true;
+- **budgie.nix**: services.xserver.desktopManager.budgie.enable = true;. services.xserver.displayManager.lightdm.enable = true;
+- **cinnamon.nix**: services.xserver.desktopManager.cinnamon.enable = true;. services.xserver.displayManager.lightdm.enable = true;
+- **deepin.nix**: services.xserver.desktopManager.deepin.enable = true;. services.xserver.displayManager.lightdm.enable = true;
+- **derriks-apps.nix**: Add packages to the system environment
+- **docker-support.nix**: Enable docker. virtualisation.docker.enable = true;. Optional: specify docker storage driver, e.g., for btrfs filesystem. Virtualisation.docker.storagedriver = "btrfs";. Optional: enable rootless mode for docker. #   enable = true;
+- **duplicati-server.nix**: services.duplicati = {. enable = true;. package = pkgs.duplicati;
+- **energy-savings.nix**: Power management settings. enable = true; # TLP service for battery optimization. Add custom tlp configurations here. Cpu frequency scaling settings
+- **enlightenment.nix**: services.xserver.displayManager.lightdm.enable = true;. services.xserver.desktopManager.enlightenment.enable = true;. services.acpid.enable = true;. services.xserver.libinput.enable = true;
+- **fish-shell-support.nix**: Fish shell support.. programs.fish.enable = true;
+- **flake-support.nix**: Enable nix command support for flakes. package = pkgs.nixFlakes;. Additional configuration can be placed here
+- **flatpak-pantheon-fix.nix**: cfg = config.services.pantheonFlatpakCursors;. options.services.pantheonFlatpakCursors = {. enable = mkEnableOption "Enable Pantheon Flatpak Cursors";
+- **flatpak.nix**: Flatpak support. services.flatpak.enable = true;. xdg.portal.enable = true;
+- **garbagecollection.nix**: No detailed description available
+- **gnome-flatpak-fix.nix**: Ensure bindfs is available for filesystem operations. Include the papirus icon theme. Add any other icon themes or resources as needed. Flatpak configuration. services.flatpak = {. enable = true;. services.xserver.desktopManager.gnome = {. enable = true;
+- **gnome-shell.nix**: services.xserver.desktopManager.gnome.enable = true;. services.xserver.displayManager.gdm.enable = true;
+- **intel-support.nix**: Enable the x11 windowing system with intel drivers. services.xserver.enable = true;. services.xserver.videoDrivers = [ "intel" ];. Opengl configuration. enable = true;
+- **kde-flatpak-fix.nix**: No detailed description available
+- **kde-plasma-gtk.nix**: Ensure the environment is set up for gtk applications. Set the global gtk theme to breeze dark. Alternatively, you can use the `gtk3` package's configuration. Uncomment the following lines if you prefer this method. Services.xserver.desktopmanager.gnome3.enable = true;. # services.xserver.desktopManager.gnome3.extraGSettingsOverrides = ''
+- **kde-plasma.nix**: services.xserver.displayManager.sddm.enable = true;. services.xserver.desktopManager.plasma5.enable = true;
+- **keymap.nix**: Configure keymap in x11. services.xserver = {
+- **lxqt.nix**: Enable the lxqt desktop environment. Additional desktop environment configuration. services.xserver = {. enable = true;. lxqt.enable = true;. sddm.enable = true;
+- **mate.nix**: services.xserver.desktopManager.mate.enable = true;. services.xserver.displayManager.lightdm.enable = true;
+- **networking.nix**: Networking.wireless.enable = true;  # enables wireless support via wpa_supplicant.. Configure network proxy if necessary. Networking.proxy.default = "http://user:password@proxy:port/";. Networking.proxy.noproxy = "127.0.0.1,localhost,internal.domain";. Enable networking. networking.networkmanager.enable = true;
+- **nix-module-template.nix**: No detailed description available
+- **nixos-hardened.nix**: Configure the firewall. enable = true;. Enable other security features
+- **nixos-software-center.nix**: Add other packages here. Additional configurations can be added here
+- **nvidia-support.nix**: Enable opengl. enable = true;. Load nvidia driver for xorg and wayland. services.xserver.enable = true;. services.xserver.videoDrivers = ["nvidia"];. modesetting.enable = true;. powerManagement.enable = false;. package = config.boot.kernelPackages.nvidiaPackages.stable;
+- **pantheon-packages.nix**: Add pantheon packages to the system environment
+- **pantheon.nix**: services.xserver.desktopManager.pantheon.enable = true;. services.xserver.displayManager.lightdm.enable = true;
+- **pipewire-support.nix**: Enable sound with pipewire. sound.enable = true;. hardware.pulseaudio.enable = false;. security.rtkit.enable = true;. services.pipewire = {. enable = true;. alsa.enable = true;. pulse.enable = true;. # jack.enable = true;
+- **podman-support.nix**: Podman support. enable = true;. Create a `docker` alias for podman. Enable dns for container communication under podman-compose. Uncomment the following for nixos versions > 22.11
+- **printer.nix**: Enable cups to print documents.. services.printing.enable = true;
+- **server.nix**: System configuration. Add other common server services as required:. Nginx or apache for web serving, samba for file sharing,. Postfix for a mail server, syncthing for file synchronization, etc.. Example: nginx. enable = true;. enable = true;
+- **snapd.nix**: Enable snapd. services.snap.enable = true;
+- **ssh-server.nix**: Enable openssh daemon. services.openssh.enable = true;. Configure gnupg. enable = true;. Additional configurations can be added here. # programs.mtr.enable = true;
+- **steam-deck-support.nix**: Fetch the "development" branch of the jovian-nixos repository. steam.enable = true;. enable = true;. services.xserver.displayManager.gdm.wayland = lib.mkForce true;. services.xserver.displayManager.defaultSession = "gamescope-wayland";. services.xserver.displayManager.autoLogin.enable = true;. services.xserver.displayManager.autoLogin.user = "deck";. sound.enable = true;. services.xserver.desktopManager.gnome = {. enable = true;. systemd.services.gamescope-switcher = {
+- **swapfile.nix**: No detailed description available
+- **tailscale-support.nix**: Tailscale support. services.tailscale.enable = true;
+- **timezone-localization.nix**: Set your time zone.. Select internationalisation properties.
+- **unfree-packages.nix**: Allow unfree packages
+- **unsecure-packages.nix**: No detailed description available
+- **user-account.nix**: Define a user account. don't forget to set a password with ‘passwd’.
+- **virtualization-support.nix**: Virtualbox support. virtualisation.virtualbox.host.enable = true;. Virtualization support. virtualisation.libvirtd.enable = true;
+- **vnc-server.nix**: Vnc server configuration. services.tigervnc = {. enable = true;. Custom xstartup script to start the mate desktop. !/bin/sh. services.xserver = {. enable = true;. desktopManager.mate.enable = true;
+- **waydroid-support.nix**: Enable waydroid. virtualisation.waydroid.enable = true;. Additional configurations and notes:. 1. you may need to adjust settings if you have an nvidia card or an rx 6800 series:. - edit /var/lib/waydroid/waydroid_base.prop and set:
+- **xfce4.nix**: services.xserver.desktopManager.xfce.enable = true;. services.xserver.displayManager.lightdm.enable = true;
+- **zram-swapfile.nix**: Load the zram kernel module. Set up the zram device. systemd.services.zram = {. Setting up /dev/zram0. Ensure swap is on
+
+## Server Modules
+- **automatic-updater.nix**: Enable automatic updates. enable = true;. systemd.services.nixos-upgrade = {
+- **basic-server-apache.nix**: System configuration. Add other common server services as required:. Nginx or apache for web serving, samba for file sharing,. Postfix for a mail server, syncthing for file synchronization, etc.. Example: apache. services.httpd = {. enable = true;. enable = true;
+- **basic-server.nix**: System configuration. Nginx web server. enable = true;. Nginx specific configurations. Samba file sharing. enable = true;. enable = true;. enable = true;. enable = true;. enable = false; # Set to true if you want to use Apache
+- **bcachefs-support.nix**: Enable filesystem support for bcachefs. Specify the file system configuration. Use the latest linux kernel supporting bcachefs. Boot.kernelpackages = pkgs.linuxpackages_latest;. Include bcachefs-tools
+- **bootloader-mbr.nix**: Enables the grub bootloader.. boot.loader.grub.enable = true;. Specifies the device for the grub bootloader installation.. Replace '/dev/sdx' with the appropriate device identifier, e.g., '/dev/sda'.. Specifies that the system is not efi-based.
+- **bootloader-systemdboot.nix**: Enable systemd-boot as the bootloader. boot.loader.systemd-boot.enable = true;. Allow the bootloader to modify efi variables. Additional configurations can be added here
+- **bootloader.nix**: boot.loader.systemd-boot.enable = false;. boot.loader.grub.enable = true;
+- **docker-support.nix**: Enable docker. virtualisation.docker.enable = true;. Optional: specify docker storage driver, e.g., for btrfs filesystem. Virtualisation.docker.storagedriver = "btrfs";. Optional: enable rootless mode for docker. #   enable = true;
+- **flake-support.nix**: Enable nix command support for flakes. package = pkgs.nixFlakes;. Additional configuration can be placed here
+- **garbagecollection.nix**: No detailed description available
+- **jellyfin-media-server.nix**: Include jellyfin packages. Configure jellyfin service. services.jellyfin = {. enable = true;. Uncomment and set the following options as needed. # package = pkgs.jellyfin; # Specific Jellyfin package to use
+- **mergerfs-mounts.nix**: .... ...
+- **networking.nix**: Networking.wireless.enable = true;  # enables wireless support via wpa_supplicant.. Configure network proxy if necessary. Networking.proxy.default = "http://user:password@proxy:port/";. Networking.proxy.noproxy = "127.0.0.1,localhost,internal.domain";. Enable networking. networking.networkmanager.enable = true;
+- **nextcloud-server.nix**: Environment setup for nextcloud admin and database passwords. Postgresql service configuration. services.postgresql = {. enable = true;. package = pkgs.postgresql_14;  # Adjust the PostgreSQL version as needed. services.phpfpm.pools.nextcloud = {. services.nextcloud = {. enable = true;. package = pkgs.nextcloud28; # Adjust the Nextcloud version as needed
+- **nixos-hardened.nix**: Configure the firewall. enable = true;. Enable other security features
+- **plex-media-server.nix**: services.plex = {. enable = true;. Uncomment and set the following options as needed. Datadir = "/path/to/plex/data"; # directory for plex data files. Extraplugins = [ "/path/to/plugin1" "/path/to/plugin2" ]; # paths to extra plex plugins. # package = pkgs.plex; # Specific Plex package to use
+- **podman-support.nix**: Podman support. enable = true;. Create a `docker` alias for podman. Enable dns for container communication under podman-compose. Uncomment the following for nixos versions > 22.11
+- **rdp-server.nix**: Enable the xorg server. services.xserver = {. enable = true;. displayManager.lightdm.enable = true; # Using LightDM as the display manager. desktopManager.mate.enable = true; # Enable MATE desktop environment. services.xrdp = {. enable = true;
+- **samba-shares.nix**: Configure the additional samba shares. services.samba.extraConfig = ''
+- **ssh-server.nix**: Enable openssh daemon. services.openssh.enable = true;. Configure gnupg. enable = true;. Additional configurations can be added here. # programs.mtr.enable = true;
+- **storage-mounts.nix**: Storage-mounts.nix
+- **swapfile.nix**: No detailed description available
+- **syncthing-server.nix**: services.syncthing = {. enable = true;. Include your folder configurations here. systemd.services.syncthing.serviceConfig.ExecStart = lib.mkForce [
+- **tailscale-support.nix**: Tailscale support. services.tailscale.enable = true;
+- **timezone-localization.nix**: Set your time zone.. Select internationalisation properties.
+- **unfree-packages.nix**: Allow unfree packages
+- **unsecure-packages.nix**: No detailed description available
+- **user-account.nix**: Define a user account. don't forget to set a password with ‘passwd’.
+- **virtualization-support.nix**: Virtualbox support. virtualisation.virtualbox.host.enable = true;. Virtualization support. virtualisation.libvirtd.enable = true;
+- **vnc-server.nix**: !/usr/bin/env bash. Load x resources, if any. Start mate desktop session. Enable the xorg server. services.xserver = {. enable = true;. desktopManager.mate.enable = true; # Enable MATE desktop environment. systemd.services.tigervnc = {
