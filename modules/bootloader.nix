@@ -9,5 +9,7 @@
   boot.loader.grub.useOSProber = true;
   boot.loader.grub.configurationLimit = 3;
   boot.kernelPackages = pkgs.linuxPackages_latest;
-}
 
+  # Add custom kernel parameters
+  boot.kernelParams = [ "module.sig_unenforce" ];
+}
