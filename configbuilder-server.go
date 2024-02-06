@@ -32,6 +32,7 @@ var moduleChoices = []string{
     "syncthing-server.nix",
     "plex-media-server.nix",
     "jellyfin-media-server.nix",
+    "audiobookshelf-server.nix",
     "nextcloud-server.nix",
     "samba-shares.nix",
     "mergerfs-mounts.nix",
