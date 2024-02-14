@@ -3,7 +3,9 @@
 {
   # Configure keymap in X11
   services.xserver = {
-    layout = "us";
-    xkbVariant = "";
+    xkb = {
+      layout = "us";
+      variant = ""; # Leave empty if you don't require a specific variant
+    };
   };
 }
