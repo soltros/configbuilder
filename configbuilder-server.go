@@ -29,6 +29,7 @@ var moduleChoices = []string{
     "ssh-server.nix",
     "vnc-server.nix",
     "rdp-server.nix",
+    "borgbackup-repo.nix",
     "syncthing-server.nix",
     "plex-media-server.nix",
     "jellyfin-media-server.nix",
