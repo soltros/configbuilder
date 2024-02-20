@@ -8,6 +8,7 @@
         python312
         papirus-icon-theme
         gnome.dconf-editor
+        libreoffice-qt
         gnome.gnome-tweaks
 	tdesktop
 	spotify
