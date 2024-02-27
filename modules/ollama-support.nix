@@ -1,42 +1,36 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.services.ollama;
 in
 {
   options.services.ollama = {
-    enable = lib.mkEnableOption "Ollama service";
+    enable = lib.mkEnableOption "Ollama Service";
 
-    package = lib.mkOption {
-      type = lib.types.package;
-      default = pkgs.ollama;
-      description = "The package that provides the ollama binary.";
-    };
+    # You can add additional options here if needed
+    # For example, to customize the path to the ollama binary or other settings
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.ollama = {
-      isNormalUser = true;
-      uid = if config.users.mutableUsers then "ollama" else null;
-      group = "ollama";
-    };
-
-    users.groups.ollama = {};
-
     systemd.services.ollama = {
       description = "Ollama Service";
       after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
+      wantedBy = [ "default.target" ];
 
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/ollama serve";
+        ExecStart = "${pkgs.ollama}/bin/ollama serve";
         User = "ollama";
         Group = "ollama";
         Restart = "always";
         RestartSec = 3;
       };
-
-      wantedBy = [ "multi-user.target" ]; # Typically, services should be wanted by multi-user.target unless it's a graphical service, which then `default.target` is used.
     };
+
+    # Ensure the ollama user and group exist
+    users.users.ollama = {
+      isSystemUser = true;
+      group = "ollama";
+    };
+    users.groups.ollama = {};
   };
 }
