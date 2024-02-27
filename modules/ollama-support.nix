@@ -1,4 +1,5 @@
 { config, pkgs, lib, ... }:
+
 let
   cfg = config.services.ollama;
 in
@@ -16,6 +17,7 @@ in
   config = lib.mkIf cfg.enable {
     users.users.ollama = {
       isNormalUser = true;
+      uid = if config.users.mutableUsers then "ollama" else null;
       group = "ollama";
     };
 
@@ -34,7 +36,7 @@ in
         RestartSec = 3;
       };
 
-      wantedBy = [ "default.target" ];
+      wantedBy = [ "multi-user.target" ]; # Typically, services should be wanted by multi-user.target unless it's a graphical service, which then `default.target` is used.
     };
   };
 }
