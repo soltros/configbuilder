@@ -9,7 +9,6 @@ in
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.ollama;
-      example = lib.literalExample "pkgs.ollama";
       description = "The package that provides the ollama binary.";
     };
   };
