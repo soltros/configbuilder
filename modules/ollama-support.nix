@@ -7,26 +7,26 @@ in
   options.services.ollama = {
     enable = lib.mkEnableOption "Ollama Service";
 
-    # You can add additional options here if needed
-    # For example, to customize the path to the ollama binary or other settings
+    # Additional options can be added here as needed.
+    # For instance, customization for the ollama binary path or other settings.
   };
 
   config = lib.mkIf cfg.enable {
     systemd.services.ollama = {
       description = "Ollama Service";
-      after = [ "network-online.target" ];
-      wantedBy = [ "default.target" ];
+      after = [ "network-online.target" ]; # Ensures service starts after network is up
+      wantedBy = [ "multi-user.target" ]; # Ensures service is started at the appropriate runlevel
 
       serviceConfig = {
-        ExecStart = "${pkgs.ollama}/bin/ollama serve";
-        User = "ollama";
-        Group = "ollama";
-        Restart = "always";
-        RestartSec = 3;
+        ExecStart = "${pkgs.ollama}/bin/ollama serve"; # Starts ollama service
+        User = "ollama"; # Runs under ollama user
+        Group = "ollama"; # Runs under ollama group
+        Restart = "always"; # Service is restarted on failure
+        RestartSec = 3; # Delay before service restart
       };
     };
 
-    # Ensure the ollama user and group exist
+    # Ensures the ollama user and group exist
     users.users.ollama = {
       isSystemUser = true;
       group = "ollama";
