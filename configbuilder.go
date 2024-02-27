@@ -36,7 +36,7 @@ var moduleChoices = []string{
     "pantheon.nix",
     "pipewire-support.nix",
     "podman-support.nix",
-    "olama-support.nix",
+    "ollama-support.nix",
     "tailscale-support.nix",
     "timezone-localization.nix",
     "unfree-packages.nix",
