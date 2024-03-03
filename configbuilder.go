@@ -15,6 +15,7 @@ const nixosDir = "/etc/nixos/"
 var moduleChoices = []string{
     "bootloader.nix",
     "bootloader-mbr.nix",
+    "ckb-next.nix",
     "bootloader-systemdboot.nix",
     "bcachefs-support.nix",
     "budgie.nix",
