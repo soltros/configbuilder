@@ -1,18 +1,46 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-{
-  # Enable the ckb-next driver for Corsair devices
-  hardware.ckb-next.enable = true;
-  hardware.ckb-next.package = true;
-  
-  # Define the package to use for ckb-next, typically it is not necessary to change this
-  # as it will use the default package from nixpkgs.
-  # However, if you need a custom or specific version, you can override it like so:
-  # hardware.ckb-next.package = pkgs.ckb-next.override { ... };
+with lib;
 
-  # Set the GID for the ckb-next daemon, if needed.
-  # This is typically only necessary if you have a specific requirement for group id.
-  # hardware.ckb-next.gid = <desired-group-id>;
+let
+  cfg = config.hardware.ckb-next;
 
-  # You can add additional configuration here as needed.
-}
+in
+  {
+    imports = [
+      (mkRenamedOptionModule [ "hardware" "ckb" "enable" ] [ "hardware" "ckb-next" "enable" ])
+      (mkRenamedOptionModule [ "hardware" "ckb" "package" ] [ "hardware" "ckb-next" "package" ])
+    ];
+
+    options.hardware.ckb-next = {
+      enable = mkEnableOption (lib.mdDoc "the Corsair keyboard/mouse driver");
+
+      gid = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        example = 100;
+        description = lib.mdDoc ''
+          Limit access to the ckb daemon to a particular group.
+        '';
+      };
+
+      package = mkPackageOption pkgs "ckb-next" { };
+    };
+
+    config = mkIf cfg.enable {
+      environment.systemPackages = [ cfg.package ];
+
+      systemd.services.ckb-next = {
+        description = "Corsair Keyboards and Mice Daemon";
+        wantedBy = ["multi-user.target"];
+        serviceConfig = {
+          ExecStart = "${cfg.package}/bin/ckb-next-daemon ${optionalString (cfg.gid != null) "--gid=${builtins.toString cfg.gid}"}";
+          Restart = "on-failure";
+        };
+      };
+    };
+
+    meta = {
+      maintainers = with lib.maintainers; [ ];
+    };
+  }
