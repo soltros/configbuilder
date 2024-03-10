@@ -38,6 +38,7 @@ var moduleChoices = []string{
     "pipewire-support.nix",
     "podman-support.nix",
     "ollama-support.nix",
+    "rsnapshot.nix",
     "tailscale-support.nix",
     "timezone-localization.nix",
     "unfree-packages.nix",
