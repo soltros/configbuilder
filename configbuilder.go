@@ -33,6 +33,7 @@ var moduleChoices = []string{
     "lxqt.nix",
     "networking.nix",
     "nvidia-support.nix",
+    "nvidia-super-support.nix",
     "pantheon-packages.nix",
     "pantheon.nix",
     "pipewire-support.nix",
