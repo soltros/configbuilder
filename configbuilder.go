@@ -34,6 +34,7 @@ var moduleChoices = []string{
     "networking.nix",
     "nvidia-support.nix",
     "nvidia-super-support.nix",
+    "noveau.nix",
     "pantheon-packages.nix",
     "pantheon.nix",
     "pipewire-support.nix",
