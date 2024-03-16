@@ -10,6 +10,8 @@
   services.xserver.displayManager.defaultSession = "plasma";
   services.xserver.displayManager.sddm.wayland.enable = true;
   services.xserver.desktopManager.plasma6.enable = true;
+  
+  #General required services
+  services.xserver.enable = true;
 
 }
-
