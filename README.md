@@ -67,6 +67,11 @@ If you wish to install NixOS with BcacheFS, you need kernel 6.7, and the nixos.b
 As of now, configbuilder supports setting up Snap packages on NixOS, via the [nix-snapd](https://github.com/io12/nix-snapd) project. However, before you can enable [snapd.nix](https://github.com/soltros/configbuilder/blob/main/modules/snapd.nix), you must run the installation tool. This tool will download the nix-snapd module, upgrade your NixOS system to Unstable, and build it. You can run the installer directly with the command below. 
 
 ``curl https://raw.githubusercontent.com/soltros/configbuilder/main/tools/snapd-installer.sh | sh``
+### Note on module-updater.go
+To keep .nix modules in Sync locally with the repo, run module-updater.go with:
+
+``go build module-updater.go``
+``sudo ./module-updater``
 
 ### Note on Standard Libraries
 
