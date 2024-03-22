@@ -1,21 +1,13 @@
-{
-  # this is not a complete flake.nix
-  description = "Plasma 6";
+self: super: {
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    kde2nix.url = "github:nix-community/kde2nix";
-  };
+  # Fetch the unstable channel
+  nixos-unstable = import (super.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+    # It's a good idea to periodically update the sha256 to match the latest tarball
+    sha256 = "0000000000000000000000000000000000000000000000000000";
+  }) {};
 
-  outputs = { self, nixpkgs, kde2nix, ... }: {
-    nixosConfigurations.yourHostnameHere = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        kde2nix.nixosModules.plasma6
-        ./configuration.nix
-        ./networking.nix
-        ({ services.xserver.desktopManager.plasma6.enable = true; })
-      ];
-    };
-  };
+  # Override the KDE packages with those from the unstable channel
+  plasma-desktop = self.nixos-unstable.plasma-desktop;
+  # Add additional KDE Plasma 6 packages as necessary
 }
