@@ -14,7 +14,8 @@
           imports = [
             kde2nix.nixosModules.plasma6
           ];
-           })
+          services.xserver.desktopManager.plasma6.enable = true;
+        })
         ./configuration.nix
         ./networking.nix
       ];
