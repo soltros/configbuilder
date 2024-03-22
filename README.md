@@ -71,6 +71,8 @@ As of now, configbuilder supports setting up Snap packages on NixOS, via the [ni
 To keep .nix modules in Sync locally with the repo, run module-updater.go with:
 
 ``go build module-updater.go``
+
+
 ``sudo ./module-updater``
 
 ### Note on Standard Libraries
