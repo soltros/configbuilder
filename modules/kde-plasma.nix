@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 let
-  overlayPath = "plasma6-overlay.nix";
+  overlayPath = "/etc/nixos/plasma6-overlay.nix";
   plasma6-overlay = import overlayPath { inherit pkgs; };
 in {
   nixpkgs.overlays = [ plasma6-overlay ];
