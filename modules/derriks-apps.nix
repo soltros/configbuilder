@@ -6,6 +6,7 @@
 	bitwarden
         git
         python312
+        appimage-run
         papirus-icon-theme
         gnome.dconf-editor
         libreoffice-qt
