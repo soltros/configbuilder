@@ -29,6 +29,7 @@ var moduleChoices = []string{
     "intel-support.nix",
     "kde-flatpak-fix.nix",
     "kde-plasma.nix",
+    "plasma6-overlay.nix",
     "mate.nix",
     "lxqt.nix",
     "networking.nix",
