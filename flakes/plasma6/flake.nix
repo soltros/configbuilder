@@ -7,14 +7,18 @@
   };
 
   outputs = { self, nixpkgs, kde2nix, ... }: {
-    nixosConfigurations.yourHostnameHere = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.b450m-d3sh = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        kde2nix.nixosModules.plasma6,
-        ./configuration.nix,
-        ./networking.nix,
-        ({ services.xserver.desktopManager.plasma6.enable = true; })
+        ({ pkgs, ... }: {
+          imports = [
+            kde2nix.nixosModules.plasma6
+          ];
+          services.xserver.desktopManager.plasma6.enable = true;
+        })
+        ./configuration.nix
+        ./networking.nix
       ];
     };
-  }; 
+  };
 }
