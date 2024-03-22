@@ -55,9 +55,8 @@ The app uses the following Go standard libraries and an external package:
 ### Note on steam-deck-support.nix
 The Steam Deck module is still being ironed out. Use at your own risk. 
 
-## Note on Plasma 6 support on Stable
-You'll need to enable kde-plasma.nix. Then, download the Plasma Flake, and customize the hostname (ensure its also customized in networking.nix). You can then install KDE Plasma 6 with:
-``sudo nixos-rebuild boot --flake '.#your-hostname'``
+## Note on Plasma 6 support
+You'll need to enable kde-plasma6.nix in configbuilder. Then, use the ``unstable-setup.sh`` tool.
 
 ### Note on BcacheFS support:
 If you wish to install NixOS with BcacheFS, you need kernel 6.7, and the nixos.bcachefs-tools package. The current NixOS ISO ships with 6.1. As a result, you must generate your own ISO. Run this script to do that:
