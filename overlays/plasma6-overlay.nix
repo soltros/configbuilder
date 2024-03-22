@@ -1,15 +1,21 @@
-final: prev: {
-  # Example to fetch Plasma 6 packages from unstable
-  kdeFrameworks = prev.kdeFrameworks.override {
-    overlays = [ (self: super: {
-      plasma-desktop = super.plasma-desktop.overrideAttrs (old: {
-        src = final.fetchFromGitHub {
-          owner = "NixOS";
-          repo = "nixpkgs";
-          rev = "revision-of-unstable-where-plasma6-is";
-          sha256 = "sha256-of-plasma6-src";
-        };
-      });
-    }) ];
+{
+  # this is not a complete flake.nix
+  description = "Plasma 6";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    kde2nix.url = "github:nix-community/kde2nix";
+  };
+
+  outputs = { self, nixpkgs, kde2nix, ... }: {
+    nixosConfigurations.yourHostnameHere = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        kde2nix.nixosModules.plasma6
+        ./configuration.nix
+        ./networking.nix
+        ({ services.xserver.desktopManager.plasma6.enable = true; })
+      ];
+    };
   };
 }
