@@ -25,14 +25,12 @@
 	distrobox
 	nextcloud-client
 	geany
-	screenfetch
-	kate
 	thunderbird
 	ntfs3g
 	appimage-run
 	firefox
 	flatpak
-	mullvad
+	mullvad-vpn
 	discord
   ];
 }
