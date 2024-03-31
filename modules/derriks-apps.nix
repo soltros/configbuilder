@@ -15,6 +15,7 @@
 	spotify
 	tailscale
 	vlc
+	sshfs
 	gimp
 	wget
 	libsForQt5.ghostwriter
