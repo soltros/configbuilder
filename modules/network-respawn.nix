@@ -1,27 +1,23 @@
 { config, pkgs, lib, ... }:
 
-let
-  restartServicesScript = pkgs.writeScript "restart-services.sh" ''
-    #!/usr/bin/env sh
-    ${pkgs.coreutils}/bin/sleep 5
-    ${pkgs.systemd}/bin/systemctl restart tailscaled
-    ${pkgs.systemd}/bin/systemctl restart NetworkManager
-  '';
-in
 {
-  options.services.rebootOnResume = lib.mkEnableOption "Restart tailscaled and NetworkManager services upon resuming from suspend";
+  options.services.rebootOnResume = {
+    enable = lib.mkEnableOption "whether to restart tailscaled and NetworkManager on system resume";
+  };
 
   config = lib.mkIf config.services.rebootOnResume.enable {
     systemd.services.rebootOnResume = {
       description = "Restart tailscaled and NetworkManager after resume";
-      script = restartServicesScript;
-      path = [ pkgs.coreutils pkgs.systemd ];
+      after = [ "network-online.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+      wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = restartServicesScript;
+        ExecStart = pkgs.writeShellScript "restart-network-services" ''
+          ${pkgs.coreutils}/bin/sleep 5
+          ${pkgs.systemd}/bin/systemctl restart tailscaled
+          ${pkgs.systemd}/bin/systemctl restart NetworkManager
+        '';
       };
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
     };
 
     systemd.targets.resume = {
