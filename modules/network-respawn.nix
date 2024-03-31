@@ -13,28 +13,26 @@
     systemd.services.rebootOnResume = {
       description = "Restart tailscaled and NetworkManager after resume";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+      after = [ "network-online.target", "suspend.target", "hibernate.target", "hybrid-sleep.target" ];
 
       script = ''
         # Wait for the system to fully resume
-        sleep 5
+        ${pkgs.coreutils}/bin/sleep 5
 
         # Restart the tailscaled service
-        systemctl restart tailscaled
+        ${pkgs.systemd}/bin/systemctl restart tailscaled
 
         # Restart the NetworkManager service
-        systemctl restart NetworkManager
+        ${pkgs.systemd}/bin/systemctl restart NetworkManager
       '';
 
-      # Ensure the script runs after resume
-      path = [ pkgs.systemd ];
+      path = [ pkgs.coreutils pkgs.systemd ];
       serviceConfig.Type = "oneshot";
-      serviceConfig.ExecStartPre = "${pkgs.systemd}/bin/sleep 5";
     };
 
     # Create a systemd target for resume
     systemd.targets.resume = {
-      wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+      wantedBy = [ "suspend.target", "hibernate.target", "hybrid-sleep.target" ];
       before = [ "rebootOnResume.service" ];
     };
 
