@@ -1,11 +1,12 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Overlay to enable Plasma 6 unstable
+  # Overlay to enable Plasma 6 unstable with custom selections
   overlay-plasma6-unstable = self: super: {
-    # Replace with the actual package names you want to use from plasma-unstable
-    # This is a placeholder - adjust these based on your needs
-    plasmaPackages = pkgs.kdePackages_unstable.overrideAttrs (oldAttrs: { });
+    plasmaPackages = pkgs.kdePackages_unstable.overrideAttrs (oldAttrs: {
+      # Replace with specific attributes to modify packages as needed
+      # This is a placeholder - adjust these based on your needs
+    });
   };
 
 in
@@ -23,8 +24,8 @@ in
   # Enable Plasma 6 (might not be necessary)
   # services.xserver.desktopManager.plasma6.enable = true;
 
-  # Don't exclude any Plasma 6 packages (assuming you want unstable versions)
-  environment.plasma6.excludePackages = with pkgs.kdePackages; [];
+  # Exclude all Plasma 6 packages (assuming you want to use custom selections only)
+  environment.plasma6.excludePackages = with pkgs.kdePackages; pkgs.kdePackages;
   
   # Configure GnuPG's pinentry to use pinentry-qt.
   programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-qt;
