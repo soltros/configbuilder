@@ -40,15 +40,16 @@ The app uses the following Go standard libraries and an external package:
 
 3. **Initialize Go Module**: If the Go module hasn't been initialized in your project directory, do so with:
     ```sh
-    go mod init configbuilder
+    go mod init configbuilder.go
     ```
 
-4. **Add External Package**: To add the required external package, use the `go get` command:
-    ```sh
-    go get github.com/AlecAivazis/survey/v2
-    ```
+    Or
 
-5. **Tidy Module Dependencies**: After adding the external package, tidy your module to ensure all dependencies are correctly listed:
+   ```
+   go mod init configbuilder-server.go
+   ```
+
+4. **Tidy Module Dependencies**: After adding the external package, tidy your module to ensure all dependencies are correctly listed:
     ```sh
     go mod tidy
     ```
