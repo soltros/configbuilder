@@ -5,7 +5,6 @@ with lib;
 {
   # Configuration for NFS server
   options = {
-    services.nfs.server.enable = mkEnableOption "Enable NFS server";
 
     services.nfs.server.exports = mkOption {
       type = types.lines;
