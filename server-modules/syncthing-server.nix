@@ -3,8 +3,8 @@
   services.syncthing = {
     enable = true;
     user = "derrik";
-    dataDir = "/mnt/merged/syncthing/data1";
-    configDir = "/mnt/merged/syncthing/config";
+    dataDir = "/mnt/storage-3/syncthing";
+    configDir = "/mnt/storage-3/syncthing";
 
     settings = {
       environment.PUID = "1000";
@@ -20,9 +20,8 @@
       # Include your folder configurations here
       overrideFolders = true;
       folders = {
-        "data1" = { path = "/mnt/merged/syncthing/data1"; };
-        "data2" = { path = "/mnt/merged/syncthing/data2"; };
-        "backups" = { path = "/mnt/merged/syncthing/backups"; };
+        "computers" = { path = "/mnt/storage-3/syncthing/computers"; };
+        "phone" = { path = "/mnt/storage-3/syncthing/phone"; };
       };
     };
   };
@@ -32,6 +31,6 @@
 
   systemd.services.syncthing.serviceConfig.ExecStart = lib.mkForce [
     ""
-    "${pkgs.syncthing}/bin/syncthing -no-browser -gui-address=0.0.0.0:8384 -config=/mnt/merged/syncthing/config -data=/mnt/merged/syncthing/data1"
+    "${pkgs.syncthing}/bin/syncthing -no-browser -gui-address=0.0.0.0:8384 -config=/mnt/storage-3/syncthing/config -data=/mnt/storage-3/syncthing"
   ];
 }
