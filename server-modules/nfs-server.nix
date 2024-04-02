@@ -2,44 +2,32 @@
 
 with lib;
 
-let
-  cfg = config.services.nfs;
-in
 {
-  options.services.nfs = {
-    enable = mkEnableOption "NFS server";
-
-    shares = mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          path = mkOption {
-            type = types.path;
-            description = "The file system path to share.";
-          };
-          hostOptions = mkOption {
-            type = types.str;
-            default = "rw,async,no_root_squash";
-            description = "Export options for the host.";
-          };
-        };
-      });
-      default = [];
-      example = literalExample ''
-        [
-          { path = "/mnt/storage-3/media-server-overflow-1/"; hostOptions = "ro,async"; }
-          { path = "/mnt/storage/media-server-overflow-2/"; hostOptions = "ro,async"; }
-        ]
-      '';
-      description = "List of file system paths to share via NFS.";
+  # Bind-mount directories to be shared via NFS
+  fileSystems = {
+    "/export/media-server-overflow-1" = {
+      device = "/mnt/storage-3/media-server-overflow-1";
+      fsType = "none";
+      options = [ "bind" ];
+    };
+    "/export/media-server-overflow-2" = {
+      device = "/mnt/storage/media-server-overflow-2";
+      fsType = "none";
+      options = [ "bind" ];
     };
   };
 
-  config = mkIf cfg.enable {
-    networking.firewall.allowedTCPPorts = [ 111 2049 ];
-    networking.firewall.allowedUDPPorts = [ 111 2049 ];
+  # Configuration for the NFS server
+  config = {
     services.nfs.server.enable = true;
-    services.nfs.exports = map (share: ''
-      ${share.path} ${share.hostOptions}
-    '') cfg.shares;
+    services.nfs.server.exports = ''
+      /export/media-server-overflow-1  *(rw,fsid=0,no_subtree_check,sync)
+      /export/media-server-overflow-2  *(rw,fsid=0,no_subtree_check,sync)
+    '';
+
+    # Opening NFS ports in the firewall
+    networking.firewall.allowedTCPPorts = [ 2049 ]; # NFSv4
+    networking.firewall.allowedUDPPorts = [ 2049 ]; # NFSv4
+    # Add additional ports as necessary for NFSv3 compatibility
   };
 }
