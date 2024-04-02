@@ -24,7 +24,7 @@
 	pavucontrol
 	element-desktop
 	distrobox
-	nextcloud-client
+	syncthingtray-minimal
 	geany
 	thunderbird
 	ntfs3g
