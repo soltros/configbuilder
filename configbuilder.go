@@ -57,7 +57,7 @@ var moduleChoices = []string{
     "garbagecollection.nix",
     "server.nix",
     "ssh-server.nix",
-    "sshfs-mount.nix",
+    "sshfs-mounts.nix",
     "vnc-server.nix",
     "fish-shell-support.nix",
     "flatpak-pantheon-fix.nix",
