@@ -24,8 +24,7 @@
 	pavucontrol
 	element-desktop
 	distrobox
-        syncthing
-	syncthingtray-minimal
+        syncthing-tray
 	geany
 	thunderbird
 	ntfs3g
