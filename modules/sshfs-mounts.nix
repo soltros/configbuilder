@@ -11,7 +11,7 @@
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStop = "${pkgs.fusermount}/bin/fusermount -u /home/derrik/Backups/Laptop";
+        ExecStop = "${pkgs.fuse}/bin/fusermount -u /home/derrik/Backups/Laptop";
         User = "derrik";
       };
     };
@@ -24,7 +24,7 @@
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStop = "${pkgs.fusermount}/bin/fusermount -u /home/derrik/Backups/Desktop";
+        ExecStop = "${pkgs.fuse}/bin/fusermount -u /home/derrik/Backups/Desktop";
         User = "derrik";
       };
     };
@@ -37,7 +37,7 @@
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStop = "${pkgs.fusermount}/bin/fusermount -u /home/derrik/Sync";
+        ExecStop = "${pkgs.fuse}/bin/fusermount -u /home/derrik/Sync";
         User = "derrik";
       };
     };
