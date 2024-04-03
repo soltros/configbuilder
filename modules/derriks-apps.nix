@@ -24,6 +24,7 @@
 	pavucontrol
 	element-desktop
 	distrobox
+        syncthing
 	syncthingtray-minimal
 	geany
 	thunderbird
