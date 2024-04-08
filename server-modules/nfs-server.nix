@@ -37,11 +37,11 @@ in
   # Enable NFS server and apply exports configuration
   config.services.nfs.server.enable = true;
   config.services.nfs.server.exports = ''
-    /export/media-server-overflow-1  *(rw,fsid=0,no_subtree_check,sync)
-    /export/media-server-overflow-2  *(rw,fsid=0,no_subtree_check,sync)
-    /export/Sync *(rw,fsid=0,no_subtree_check,sync)
-    /export/Desktop-Backup *(rw,fsid=0,no_subtree_check,sync)
-    /export/Laptop-Backup *(rw,fsid=0,no_subtree_check,sync)
+    /export/media-server-overflow-1  *(rw,no_subtree_check,sync)
+    /export/media-server-overflow-2  *(rw,no_subtree_check,sync)
+    /export/Sync *(rw,no_subtree_check,sync)
+    /export/Desktop-Backup *(rw,no_subtree_check,sync)
+    /export/Laptop-Backup *(rw,no_subtree_check,sync)
   '';
 
   # Opening NFS ports in the firewall
