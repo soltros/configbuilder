@@ -13,6 +13,7 @@
         gnome.gnome-tweaks
 	spotify
 	tailscale
+        pika-backup
 	vlc
 	gimp
 	wget
