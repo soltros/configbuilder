@@ -18,12 +18,30 @@ in
     fsType = "none";
     options = [ "bind" ];
   };
+  config.fileSystems."/export/Sync" = {
+    device = "/mnt/storage-3/syncthing/sync";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+  config.fileSystems."/export/Desktop-Backup" = {
+    device = "/mnt/storage-3/backups/desktop";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+  config.fileSystems."/export/Laptop-Backup" = {
+    device = "/mnt/storage/backups/laptop";
+    fsType = "none";
+    options = [ "bind" ];
+  };
 
   # Enable NFS server and apply exports configuration
   config.services.nfs.server.enable = true;
   config.services.nfs.server.exports = ''
     /export/media-server-overflow-1  *(rw,fsid=0,no_subtree_check,sync)
     /export/media-server-overflow-2  *(rw,fsid=0,no_subtree_check,sync)
+    /export/Sync *(rw,fsid=0,no_subtree_check,sync)
+    /export/Desktop-Backup *(rw,fsid=0,no_subtree_check,sync)
+    /export/Laptop-Backup *(rw,fsid=0,no_subtree_check,sync)
   '';
 
   # Opening NFS ports in the firewall
