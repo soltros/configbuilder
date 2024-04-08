@@ -1,23 +1,20 @@
 { config, pkgs, lib, ... }:
 
-let
-  serverHostNameOrIP = "nixos-server"; # Replace with your NFS server's hostname or IP address
-in
 {
   fileSystems."/mnt/Sync" = {
-    device = "${serverHostNameOrIP}:/export/Sync";
+    device = "nixos-server:/export/Sync";
     fsType = "nfs";
     options = [ "defaults" ];
   };
 
   fileSystems."/mnt/Desktop-Backup" = {
-    device = "${serverHostNameOrIP}:/export/Desktop-Backup";
+    device = "nixos-server:/export/Desktop-Backup";
     fsType = "nfs";
     options = [ "defaults" ];
   };
 
   fileSystems."/mnt/Laptop-Backup" = {
-    device = "${serverHostNameOrIP}:/export/Laptop-Backup";
+    device = "nixos-server:/export/Laptop-Backup";
     fsType = "nfs";
     options = [ "defaults" ];
   };
