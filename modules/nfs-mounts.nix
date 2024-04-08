@@ -23,7 +23,7 @@ in
   };
 
   # Assuming NFS client services are needed
-  services.nfs.client.enable = true;
+  services.rpcbind.enable = true;
 
   # Optional: Configure networking firewall to allow NFS, if necessary
   # networking.firewall.allowedTCPPorts = [ 2049 ]; # Adjust based on your NFS setup
