@@ -11,7 +11,6 @@
         gnome.dconf-editor
         libreoffice-qt
         gnome.gnome-tweaks
-	tdesktop
 	spotify
 	tailscale
 	vlc
