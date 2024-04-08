@@ -23,7 +23,7 @@ func main() {
             return nil // Skip directories
         }
         fileName := filepath.Base(path)
-        if !strings.HasSuffix(fileName, ".nix") || fileName == "hardware-configuration.nix" || fileName == "configuration.nix" {
+        if !strings.HasSuffix(fileName, ".nix") || fileName == "hardware-configuration.nix" || fileName == "networking.nix" || fileName == "configuration.nix" {
             return nil // Skip non-.nix files and excluded files
         }
 
