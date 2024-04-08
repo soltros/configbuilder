@@ -33,6 +33,7 @@ var moduleChoices = []string{
     "mate.nix",
     "lxqt.nix",
     "networking.nix",
+    "nfs-mounts.nix",
     "network-respawn.nix",
     "nvidia-support.nix",
     "nvidia-super-support.nix",
