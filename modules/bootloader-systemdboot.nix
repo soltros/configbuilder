@@ -8,4 +8,5 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Additional configurations can be added here
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 }
