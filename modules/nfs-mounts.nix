@@ -3,19 +3,19 @@
 {
   fileSystems."/mnt/Sync" = {
     device = "nixos-server:/export/Sync";
-    fsType = "nfs";
+    fsType = lib.mkForce "nfs";
     options = [ "defaults" ];
   };
 
   fileSystems."/mnt/Desktop-Backup" = {
     device = "nixos-server:/export/Desktop-Backup";
-    fsType = "nfs";
+    fsType = lib.mkForce "nfs";
     options = [ "defaults" ];
   };
 
   fileSystems."/mnt/Laptop-Backup" = {
     device = "nixos-server:/export/Laptop-Backup";
-    fsType = "nfs";
+    fsType = lib.mkForce "nfs";
     options = [ "defaults" ];
   };
 
