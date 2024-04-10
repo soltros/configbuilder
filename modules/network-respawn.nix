@@ -8,23 +8,28 @@
   config = lib.mkIf config.services.rebootOnResume.enable {
     systemd.services.rebootOnResume = {
       description = "Restart tailscaled and NetworkManager after resume";
-      after = [ "network-online.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = pkgs.writeShellScript "restart-network-services" ''
-          ${pkgs.coreutils}/bin/sleep 5
-          ${pkgs.systemd}/bin/systemctl restart tailscaled
-          ${pkgs.systemd}/bin/systemctl restart NetworkManager
-        '';
-      };
+      script = ''
+        #!/bin/sh
+        /run/current-system/sw/bin/sleep 5
+        /run/current-system/sw/bin/systemctl restart tailscaled
+        /run/current-system/sw/bin/systemctl restart NetworkManager
+      '';
+      serviceConfig.Type = "oneshot";
+      path = [ pkgs.coreutils pkgs.systemd ];
     };
 
-    systemd.targets.resume = {
-      wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
-      before = [ "rebootOnResume.service" ];
-    };
-
-    systemd.services."systemd-suspend".wants = [ "rebootOnResume.service" ];
+    # Using systemd-sleep to hook into the resume process
+    environment.etc."systemd/system-sleep/rebootOnResume.sh".source = pkgs.writeShellScriptBin "rebootOnResume.sh" ''
+      #!/bin/sh
+      case $1/$2 in
+        pre/*)
+          # No action needed before sleep
+          ;;
+        post/*)
+          # Actions to perform after waking up from sleep
+          systemctl start rebootOnResume.service
+          ;;
+      esac
+    '';
   };
 }
