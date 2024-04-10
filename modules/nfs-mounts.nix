@@ -1,45 +1,55 @@
 { config, pkgs, lib, ... }:
 
 {
-  # Ensure rpcbind, which is required for NFS, is enabled
+  # Required for NFS operations
   services.rpcbind.enable = true;
 
-  # Directly defining mounts and automounts
+  # Systemd mounts configuration
   systemd.mounts = [
+    # Mount configuration for "/mnt/Sync"
     {
-      what = "nixos-server:/export/Sync";
       where = "/mnt/Sync";
-      wantedBy = [ "multi-user.target" ];
+      what = "nixos-server:/export/Sync";
       type = "nfs";
-      options = "noatime,nfsvers=4.2";
+      options = "nofail,nfsvers=4.2,noatime";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
     }
+    # Mount configuration for "/mnt/Desktop-Backup"
     {
-      what = "nixos-server:/export/Desktop-Backup";
       where = "/mnt/Desktop-Backup";
-      wantedBy = [ "multi-user.target" ];
+      what = "nixos-server:/export/Desktop-Backup";
       type = "nfs";
-      options = "noatime,nfsvers=4.2";
+      options = "nofail,nfsvers=4.2,noatime";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
     }
+    # Mount configuration for "/mnt/Laptop-Backup"
     {
-      what = "nixos-server:/export/Laptop-Backup";
       where = "/mnt/Laptop-Backup";
-      wantedBy = [ "multi-user.target" ];
+      what = "nixos-server:/export/Laptop-Backup";
       type = "nfs";
-      options = "noatime,nfsvers=4.2";
+      options = "nofail,nfsvers=4.2,noatime";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
     }
   ];
 
+  # Systemd automounts configuration
   systemd.automounts = [
+    # Automount configuration for "/mnt/Sync"
     {
       where = "/mnt/Sync";
       wantedBy = [ "multi-user.target" ];
       automountConfig.TimeoutIdleSec = "600";
     }
+    # Automount configuration for "/mnt/Desktop-Backup"
     {
       where = "/mnt/Desktop-Backup";
       wantedBy = [ "multi-user.target" ];
       automountConfig.TimeoutIdleSec = "600";
     }
+    # Automount configuration for "/mnt/Laptop-Backup"
     {
       where = "/mnt/Laptop-Backup";
       wantedBy = [ "multi-user.target" ];
