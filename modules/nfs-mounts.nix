@@ -1,28 +1,34 @@
 { config, pkgs, lib, ... }:
 
+let
+  # Helper function to create a systemd service for each NFS mount
+  createNfsMountService = name: device: {
+    systemd.services.${"mount-nfs-" + name} = {
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      requires = [ "network-online.target" ];
+      script = ''
+        # Ensure the mount point exists
+        mkdir -p /mnt/${name}
+        # Mount the NFS share
+        mount -t nfs ${device} /mnt/${name}
+      '';
+      preStop = ''
+        # Cleanly unmount the NFS share when the service stops
+        umount /mnt/${name}
+      '';
+    };
+  };
+in
 {
-  fileSystems."/mnt/Sync" = {
-    device = "nixos-server:/export/Sync";
-    fsType = lib.mkForce "nfs";
-    options = [ "defaults" ];
-  };
-
-  fileSystems."/mnt/Desktop-Backup" = {
-    device = "nixos-server:/export/Desktop-Backup";
-    fsType = lib.mkForce "nfs";
-    options = [ "defaults" ];
-  };
-
-  fileSystems."/mnt/Laptop-Backup" = {
-    device = "nixos-server:/export/Laptop-Backup";
-    fsType = lib.mkForce "nfs";
-    options = [ "defaults" ];
-  };
-
-  # Assuming NFS client services are needed
+  # Enable necessary services for NFS
   services.rpcbind.enable = true;
+  networking.networkmanager.waitOnline.enable = true;
 
-  # Optional: Configure networking firewall to allow NFS, if necessary
-  # networking.firewall.allowedTCPPorts = [ 2049 ]; # Adjust based on your NFS setup
-  # networking.firewall.allowedUDPPorts = [ 2049 ]; # Adjust based on your NFS setup
+  # Configure the NFS mount services for your specific shares
+  systemd.services = {
+    inherit (createNfsMountService "Sync" "nixos-server:/export/Sync");
+    inherit (createNfsMountService "Desktop-Backup" "nixos-server:/export/Desktop-Backup");
+    inherit (createNfsMountService "Laptop-Backup" "nixos-server:/export/Laptop-Backup");
+  };
 }
