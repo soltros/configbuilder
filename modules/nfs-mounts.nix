@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Helper function to create a systemd service for each NFS mount
   createNfsMountService = name: device: {
     systemd.services.${"mount-nfs-" + name} = {
       wantedBy = [ "multi-user.target" ];
@@ -23,7 +22,6 @@ in
 {
   # Enable necessary services for NFS
   services.rpcbind.enable = true;
-  networking.networkmanager.waitOnline.enable = true;
 
   # Configure the NFS mount services for your specific shares
   systemd.services = {
