@@ -1,7 +1,10 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
 {
-  # Include Jellyfin packages
+  # Basic setup to enable Jellyfin
+  services.jellyfin.enable = true;
+  services.jellyfin.openFirewall = true;
+
+  # Packages necessary for Jellyfin
   environment.systemPackages = with pkgs; [
     jellyfin
     jellyfin-web
@@ -9,14 +12,22 @@
     xteve
   ];
 
-  # Configure Jellyfin service
-  services.jellyfin = {
-    enable = true;
-    openFirewall = true;
-
-    # Uncomment and set the following options as needed
-    # group = "jellyfingroup"; # Group under which Jellyfin runs
-    # package = pkgs.jellyfin; # Specific Jellyfin package to use
-    # user = "jellyfinuser"; # User account under which Jellyfin runs
+  # Advanced hardware transcoding setup using VAAPI (Intel)
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override {
+      enableHybridCodec = true;
+    };
   };
+  
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      vaapiIntel
+      vaapiVdpau
+      libvdpau-va-gl
+      intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
+    ];
+  };
+  # Access Jellyfin via: http://localhost:8096
 }
