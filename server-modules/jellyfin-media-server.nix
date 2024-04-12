@@ -1,9 +1,7 @@
 { config, pkgs, ... }:
-{
-  # Enable Jellyfin service
-  services.jellyfin.enable = true;
 
-  # Add Jellyfin packages
+{
+  # Include Jellyfin packages
   environment.systemPackages = with pkgs; [
     jellyfin
     jellyfin-web
@@ -11,19 +9,14 @@
     xteve
   ];
 
-  # Advanced configuration example
+  # Configure Jellyfin service
   services.jellyfin = {
-    # Specify the network port Jellyfin should use
-    port = 8096;
+    enable = true;
+    openFirewall = true;
 
-    # Configure data storage path (modify as needed)
-    dataDir = "/var/lib/jellyfin";
-
-    # Enable hardware acceleration (if supported)
-    enableHardwareAcceleration = true;
-
-    # Set the user and group under which Jellyfin will run
-    user = "jellyfin";
-    group = "jellyfin";
+    # Uncomment and set the following options as needed
+    # group = "jellyfingroup"; # Group under which Jellyfin runs
+    # package = pkgs.jellyfin; # Specific Jellyfin package to use
+    # user = "jellyfinuser"; # User account under which Jellyfin runs
   };
 }
