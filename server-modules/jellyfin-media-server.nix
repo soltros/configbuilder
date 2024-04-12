@@ -9,7 +9,6 @@
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
-    xteve
   ];
 
   # Advanced hardware transcoding setup using VAAPI (Intel)
@@ -29,5 +28,9 @@
       intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
     ];
   };
+
+  # General system rebuild and status check instructions:
+  # $ sudo nixos-rebuild switch
+  # $ sudo systemctl status jellyfin
   # Access Jellyfin via: http://localhost:8096
 }
