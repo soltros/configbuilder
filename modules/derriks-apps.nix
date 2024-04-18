@@ -5,6 +5,7 @@
   environment.systemPackages = with pkgs; [
 	bitwarden
         git
+        keepassxc
         python312
         appimage-run
         papirus-icon-theme
