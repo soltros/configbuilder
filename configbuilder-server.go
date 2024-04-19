@@ -28,6 +28,7 @@ var moduleChoices = []string{
     "basic-server.nix",
     "ssh-server.nix",
     "vnc-server.nix",
+    "subsonic-server.nix",
     "rdp-server.nix",
     "borgbackup-repo.nix",
     "syncthing-server.nix",
