@@ -1,36 +1,21 @@
 { config, pkgs, lib, ... }:
 
 {
-  # No need to define options if they are already declared in the NixOS module
-
-  config = lib.mkIf config.services.subsonic.enable {
-    users.users.subsonic = {
-      isSystemUser = true;
-      home = config.services.subsonic.home;
-      createHome = true;
-    };
-
-    # Directly use the settings to configure Subsonic service
-    services.subsonic = {
-      enable = true;
-      home = "/var/lib/subsonic";
-      port = 4040;
-      httpsPort = 0;  # HTTPS disabled by default, set to another port to enable
-      maxMemory = 100;
-      defaultMusicFolder = "/var/music";
-      defaultPodcastFolder = "/var/music/Podcast";
-      defaultPlaylistFolder = "/var/playlists";
-      contextPath = "/";
-      listenAddress = "0.0.0.0";
-      transcoders = [ "${pkgs.ffmpeg}/bin/ffmpeg" ];  # Adjust if other transcoders are needed
-    };
-
-    networking.firewall.allowedTCPPorts = [ config.services.subsonic.port ] ++
-      lib.optional (config.services.subsonic.httpsPort != 0) config.services.subsonic.httpsPort;
-
-    systemd.services.subsonic.preStart = lib.concatMapStringsSep "\n" (transcoder: ''
-      mkdir -p ${config.services.subsonic.home}/transcoders;
-      ln -sf ${transcoder} ${config.services.subsonic.home}/transcoders/;
-    '') config.services.subsonic.transcoders;
+  # Ensure the Subsonic service is enabled
+  services.subsonic = {
+    enable = true;  # This line activates Subsonic
+    home = "/var/lib/subsonic";  # Specifies the home directory for Subsonic files
+    port = 4040;  # HTTP port for Subsonic
+    httpsPort = 0;  # Disable HTTPS by default; set to a valid port number to enable
+    maxMemory = 100;  # Set the Java maximum heap size
+    defaultMusicFolder = "/var/music";  # Set the default music folder
+    defaultPodcastFolder = "/var/music/Podcast";  # Set the default podcast folder
+    defaultPlaylistFolder = "/var/playlists";  # Set the default playlist folder
+    contextPath = "/";  # Set the context path for the URL
+    listenAddress = "0.0.0.0";  # Server will listen on all network interfaces
+    transcoders = [ "${pkgs.ffmpeg}/bin/ffmpeg" ];  # Include ffmpeg as a transcoder
   };
+
+  # Configure firewall to allow traffic on the Subsonic port
+  networking.firewall.allowedTCPPorts = [ 4040 ];  # Add the HTTPS port if used
 }
