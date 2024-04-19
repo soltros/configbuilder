@@ -16,7 +16,7 @@
     httpsPort = lib.mkOption {
       type = lib.types.ints.u16;
       default = 0;
-      description = "The port on which Subsonic will listen for incoming HTTPS traffic.";
+      description = "The port on which Subsonic will listen for incoming HTTPS traffic. Set to 0 to disable.";
     };
     maxMemory = lib.mkOption {
       type = lib.types.int;
@@ -49,7 +49,7 @@
       description = "The host name or IP address on which to bind Subsonic.";
     };
     transcoders = lib.mkOption {
-      type = lib.types.listOf lib.types.path;
+      type = lib.types.listOf(lib.types.path);
       default = [ "${pkgs.ffmpeg}/bin/ffmpeg" ];
       description = "List of paths to transcoder executables that should be accessible from Subsonic.";
     };
@@ -62,7 +62,7 @@
       createHome = true;
     };
 
-    networking.firewall.allowedTCPPorts = [ config.services.subsonic.port ];
+    networking.firewall.allowedTCPPorts = [ config.services.subsonic.port ] ++ lib.optional (config.services.subsonic.httpsPort != 0) config.services.subsonic.httpsPort;
     environment.systemPackages = [ pkgs.subsonic ];
 
     systemd.services.subsonic = {
@@ -86,13 +86,10 @@
         Restart = "always";
       };
 
-      # Create symlinks for transcoders
-      preStart = ''
-        mkdir -p ${config.services.subsonic.home}/transcoders
-        ${lib.concatMapStrings (transcoder => ''
-          ln -sf ${transcoder} ${config.services.subsonic.home}/transcoders/
-        '') config.services.subsonic.transcoders}
-      '';
+      preStart = lib.concatMapStringsSep "\n" (transcoder: ''
+        mkdir -p ${config.services.subsonic.home}/transcoders;
+        ln -sf ${transcoder} ${config.services.subsonic.home}/transcoders/;
+      '') config.services.subsonic.transcoders;
     };
   };
 }
