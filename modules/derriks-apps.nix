@@ -23,7 +23,7 @@
 	winetricks
 	wine-staging
 	pavucontrol
-	element-desktop
+	fluffychat
 	distrobox
 	geany
 	thunderbird
