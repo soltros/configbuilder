@@ -6,10 +6,15 @@
   services.acpid.enable = true;
   services.xserver.libinput.enable = true;
 
-  # Enabling XDG portal and adding a portal implementation
+  # Configuring XDG portal with specific backend settings
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];  # Adjust based on your desktop environment needs
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];  # Use the appropriate portal for your environment
+    config = {
+      common = {
+        default = "*";  # Use the first portal implementation found, mimicking behavior < 1.17
+      };
+    };
   };
 
 }
