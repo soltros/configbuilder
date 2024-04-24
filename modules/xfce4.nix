@@ -1,5 +1,4 @@
 { config, pkgs, ... }:
-
 {
   # Enable the X11 windowing system
   services.xserver.enable = true;
@@ -14,11 +13,12 @@
   # Set LightDM as the default display manager
   services.xserver.displayManager.defaultSession = "xfce";
 
-  # Enable Pipewire for audio and video support
-  security.rtkit.enable = true; # Real-time privileges for Pipewire
+  # Enable Pipewire for handling audio and video (revised configuration)
+  security.rtkit.enable = true; # Ensures real-time priorities for the Pipewire daemon
   services.pipewire.enable = true;
-  services.pipewire.mediaSession.enable = true;
-  services.pipewire.alsa.enable = true; # Compatibility with ALSA applications
-  services.pipewire.pulse.enable = true; # To replace PulseAudio functionalities
+  services.pipewire.alsa.enable = true; # Allows ALSA clients to use Pipewire
+  services.pipewire.pulse.enable = true; # Makes Pipewire act as a drop-in replacement for PulseAudio
 
+  # Optional: Network Manager for network management
+  networking.networkmanager.enable = true;
 }
