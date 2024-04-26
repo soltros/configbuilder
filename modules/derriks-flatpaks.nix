@@ -8,8 +8,8 @@ in
     enable = lib.mkEnableOption "Custom Flatpak management";
     flatpakList = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [];
-      example = [ "com.spotify.Client" "org.mozilla.firefox" ];
+      default = [ "io.kopia.KopiaUI" "com.slack.Slack" "com.valvesoftware.Steam" ];  # Default list of Flatpaks
+      example = [ "io.kopia.KopiaUI" "com.slack.Slack" "com.valvesoftware.Steam" ];
       description = "List of Flatpak applications to install from Flathub.";
     };
   };
