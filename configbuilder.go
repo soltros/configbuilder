@@ -29,6 +29,7 @@ var moduleChoices = []string{
     "intel-support.nix",
     "kde-flatpak-fix.nix",
     "kde-plasma6.nix",
+    "cosmic-desktop.nix",
     "kde-plasma5.nix",
     "mate.nix",
     "lxqt.nix",
