@@ -20,7 +20,7 @@
             };
           }
           nixos-cosmic.nixosModules.default
-          ./configuration.nix
+          ./etc/nixos/configuration.nix
         ];
       };
     };
