@@ -1,25 +1,18 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    nixos-cosmic = {
-      url = "github:lilyinstarlight/nixos-cosmic";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, nixos-cosmic }: {
+  outputs = { self, nixpkgs }: {
     nixosConfigurations = {
       # NOTE: change "host" to your system's hostname
       hp-laptop = nixpkgs.lib.nixosSystem {
         modules = [
           {
             nix.settings = {
-              substituters = [ "https://cosmic.cachix.org/" ];
-              trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+              # If you have other substituters or trusted-public-keys, add them here
             };
           }
-          nixos-cosmic.nixosModules.default
           ./configuration.nix
         ];
       };
