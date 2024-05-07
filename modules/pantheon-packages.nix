@@ -6,6 +6,7 @@
     pkgs.pantheon-tweaks
     pantheon.switchboard-plug-about
     pantheon.switchboard-plug-a11y
+    wingpanel-indicator-ayatana
     pantheon.switchboard-plug-applications
     pantheon.switchboard-plug-bluetooth
     pantheon.switchboard-plug-datetime
