@@ -24,6 +24,7 @@ var moduleChoices = []string{
     "enlightenment.nix",
     "derriks-apps.nix",
     "gnome-shell.nix",
+    "gnome-keyring.nix",
     "nixos-software-center.nix",
     "gnome-flatpak-fix.nix",
     "intel-support.nix",
