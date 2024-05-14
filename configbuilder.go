@@ -46,6 +46,7 @@ var (
 	repoURL         string
 	apiURL          string
 	showHelp        bool
+	freshInstall    bool
 )
 
 func checkDependencies() {
@@ -237,7 +238,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.textView += fmt.Sprintf("Error writing to configuration.nix: %s\n", err)
 				} else {
 					m.textView += "configuration.nix generated successfully.\n"
-					m.textView += runNixosRebuild()
+					m.textView += runNixosCommand()
 				}
 				m.showConfirm = false
 				m.mockContent = ""
@@ -297,17 +298,23 @@ func (m model) getModules() []moduleItem {
 	return modules
 }
 
-func runNixosRebuild() string {
-	cmd := exec.Command("nixos-rebuild", "boot")
+func runNixosCommand() string {
+	var cmd *exec.Cmd
+	if freshInstall {
+		cmd = exec.Command("nixos-install", "--root", "/mnt")
+	} else {
+		cmd = exec.Command("nixos-rebuild", "boot")
+	}
+
 	var output strings.Builder
-	output.WriteString("Running nixos-rebuild boot...\n")
+	output.WriteString(fmt.Sprintf("Running %s...\n", strings.Join(cmd.Args, " ")))
 	cmd.Stdout = &output
 	cmd.Stderr = &output
 	err := cmd.Run()
 	if err != nil {
-		output.WriteString(fmt.Sprintf("Failed to run nixos-rebuild boot: %s\n", err))
+		output.WriteString(fmt.Sprintf("Failed to run %s: %s\n", strings.Join(cmd.Args, " "), err))
 	} else {
-		output.WriteString("nixos-rebuild boot completed successfully.\n")
+		output.WriteString(fmt.Sprintf("%s completed successfully.\n", strings.Join(cmd.Args, " ")))
 	}
 	return output.String()
 }
@@ -317,12 +324,13 @@ func printHelp() {
 Usage: configbuilder [options]
 
 Options:
-  --dir        Target directory for the configuration (default: /etc/nixos/)
-  --server     Use server modules repository
-  --help       Display this help message and exit
+  --dir            Target directory for the configuration (default: /etc/nixos/)
+  --server         Use server modules repository
+  --fresh-install  Perform a fresh installation using nixos-install
+  --help           Display this help message and exit
 
 Description:
-This program allows you to select NixOS modules, download them, generate a configuration.nix file, and optionally run nixos-rebuild boot. It includes the following functionalities:
+This program allows you to select NixOS modules, download them, generate a configuration.nix file, and optionally run nixos-rebuild boot or nixos-install. It includes the following functionalities:
 
 1. Module Selection:
    - Use the arrow keys to navigate the list of available modules.
@@ -333,7 +341,7 @@ This program allows you to select NixOS modules, download them, generate a confi
 
 3. Download, Generate, and Rebuild:
    - Press 't' to download the selected modules, generate the configuration.nix file, and display the generated content for confirmation.
-   - If you confirm with 'y', the configuration file is created, and nixos-rebuild boot is triggered.
+   - If you confirm with 'y', the configuration file is created, and nixos-rebuild boot or nixos-install is triggered.
    - If you cancel with 'n', the operation is aborted.
 
 4. Help:
@@ -342,6 +350,7 @@ This program allows you to select NixOS modules, download them, generate a confi
 Examples:
   configbuilder --dir /mnt/etc/nixos/
   configbuilder --dir /mnt/etc/nixos/ --server
+  configbuilder --dir /mnt/etc/nixos/ --fresh-install
 `
 	fmt.Println(helpText)
 }
@@ -353,6 +362,7 @@ func main() {
 	var useServerRepo bool
 	flag.StringVar(&dir, "dir", "/etc/nixos/", "Target directory for the configuration")
 	flag.BoolVar(&useServerRepo, "server", false, "Use server modules repository")
+	flag.BoolVar(&freshInstall, "fresh-install", false, "Perform a fresh installation using nixos-install")
 	flag.BoolVar(&showHelp, "help", false, "Display help")
 	flag.Parse()
 
