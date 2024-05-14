@@ -29,7 +29,7 @@ in
     # Ensures the ollama user and group exist
     users.users.ollama = {
       isSystemUser = true;
-      group = "ollama";
+      extraGroups = [ "ollama" ]; # Ensure user is part of the ollama group
     };
     users.groups.ollama = {};
   };
