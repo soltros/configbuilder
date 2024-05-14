@@ -33,6 +33,12 @@ For server modules, run:
 go run configbuilder.go --dir /path/to/your/directory --server
 ```
 
+To perform a fresh installation using `nixos-install`, use the `--fresh-install` flag:
+
+```sh
+go run configbuilder.go --dir /path/to/your/directory --fresh-install
+```
+
 ### Built Binary
 
 It is recommended to build the program as a Go binary for better performance and ease of use. You can build it yourself with:
@@ -48,16 +54,16 @@ go build configbuilder-server.go
 - **Space**: Toggle the selection of modules.
 - **c**: Create a backup of the current configuration.nix file in the target directory.
 - **t**: Download the selected modules, generate the configuration.nix file, and display the generated content for confirmation.
-- **y**: Confirm the action to create the configuration.nix file and run nixos-rebuild boot.
+- **y**: Confirm the action to create the configuration.nix file and run the appropriate NixOS command.
 - **n**: Cancel the action.
 - **q**: Quit the program.
 
 ### Confirmation Step
 
-After selecting modules and initiating the process with `t`, the program will simulate the generation of the configuration file and display its content. You will be prompted to confirm the creation of the configuration file and running `nixos-rebuild boot` with the following red text:
+After selecting modules and initiating the process with `t`, the program will simulate the generation of the configuration file and display its content. You will be prompted to confirm the creation of the configuration file and running the appropriate NixOS command with the following red text:
 
 ```go
-redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and run nixos-rebuild boot? (y/n)\n")
+redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and run nixos-rebuild boot or nixos-install? (y/n)\n")
 ```
 
 ## Notes
