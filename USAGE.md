@@ -1,47 +1,68 @@
-
 ## Overview
 
-This guide explains how users can customize the ConfigBuilder app, a Go-based tool for managing NixOS configurations. The app allows users to select from a predefined list of Nix modules, which can be customized as per user requirements.
+This guide explains how users can customize the ConfigBuilder app, a Go-based tool for managing NixOS configurations. The app allows users to select from a dynamically fetched list of Nix modules from a GitHub repository.
 
 ## Customizing Module Choices
 
-To customize the list of modules that users can choose from in the ConfigBuilder app, you need to modify the `moduleChoices` variable in the Go code. This variable is an array of strings, where each string represents a Nix module.
+To customize the list of modules that users can choose from in the ConfigBuilder app, you need to update the modules available in the specified GitHub repository. The app now fetches the list of available modules using the GitHub API.
 
-### Default Module Choices
+### Default Module Repository
 
-Here is the current snippet of the `moduleChoices` variable:
+The default repository URL used by the ConfigBuilder app is:
+- **Default modules**: `https://raw.githubusercontent.com/soltros/configbuilder/main/modules/`
+- **Server modules**: `https://raw.githubusercontent.com/soltros/configbuilder/main/server-modules/`
 
-```go
-var moduleChoices = []string{
-    "bootloader.nix",
-    "budgie.nix",
-    // ... [other module choices] ...
-    "server.nix",
-}
-```
+The app fetches the list of available modules from these repositories based on user input.
 
 ### Steps to Customize
 
-1. **Locate the `moduleChoices` Variable**: Open the Go source file where the `moduleChoices` variable is defined.
+1. **Update the GitHub Repository**: To customize the available modules, add or remove `.nix` files in the respective GitHub repository.
+2. **Ensure Valid Module Files**: Make sure each file added to the repository is a valid Nix module.
 
-2. **Modify the List**: Add or remove module names from the `moduleChoices` array. Ensure each module name is a string and is followed by a comma.
+## Running the Program
 
-    Example:
-    ```go
-    var moduleChoices = []string{
-        "custom-module1.nix",
-        "custom-module2.nix",
-        // ... add or remove modules as needed ...
-    }
-    ```
+To run the program, navigate to the directory containing the code and execute:
 
-3. **Save Changes**: After modifying the list, save the changes to the source file.
+```sh
+go run configbuilder.go --dir /path/to/your/directory
+```
 
-4. **Recompile the App**: Recompile the app for the changes to take effect.
+For server modules, run:
+
+```sh
+go run configbuilder.go --dir /path/to/your/directory --server
+```
+
+### Built Binary
+
+It is recommended to build the program as a Go binary for better performance and ease of use. You can build it yourself with:
+
+```sh
+go build configbuilder.go
+go build configbuilder-server.go
+```
+
+### Keybindings and Controls
+
+- **Arrow Keys**: Navigate the list of available modules.
+- **Space**: Toggle the selection of modules.
+- **c**: Create a backup of the current configuration.nix file in the target directory.
+- **t**: Download the selected modules, generate the configuration.nix file, and display the generated content for confirmation.
+- **y**: Confirm the action to create the configuration.nix file and run nixos-rebuild boot.
+- **n**: Cancel the action.
+- **q**: Quit the program.
+
+### Confirmation Step
+
+After selecting modules and initiating the process with `t`, the program will simulate the generation of the configuration file and display its content. You will be prompted to confirm the creation of the configuration file and running `nixos-rebuild boot` with the following red text:
+
+```go
+redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and run nixos-rebuild boot? (y/n)\n")
+```
 
 ## Notes
 
-- Ensure the module names correspond to actual Nix modules you intend to use.
-- The changes will only affect the selection menu within the app; it does not automatically download or configure the new modules you add. You need to ensure that the corresponding Nix modules are available and properly configured in your NixOS setup.
+- Ensure you have proper permissions to create and modify files in the specified directory.
+- Run the program with caution, especially in production environments, as it modifies system configuration files.
 
-By following these steps, you can customize the ConfigBuilder app to fit your specific NixOS configuration needs.
+By following these steps, you can customize and run the ConfigBuilder app to fit your specific NixOS configuration needs.
