@@ -112,7 +112,7 @@ cd configbuilder
 
 ## Running the Program
 
-To run the program, navigate to the directory containing the code and execute:
+To run the program outside of /etc/nixos/, use `--dir``.
 ```sh
 go run configbuilder.go --dir /path/to/your/directory
 ```
