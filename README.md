@@ -1,4 +1,3 @@
-
 # NixOS Configbuilder
 
 ## Overview
@@ -112,7 +111,7 @@ cd configbuilder
 
 ## Running the Program
 
-To run the program outside of /etc/nixos/, use `--dir``.
+To run the program outside of /etc/nixos/, use `--dir`.
 ```sh
 go run configbuilder.go --dir /path/to/your/directory
 ```
@@ -120,6 +119,11 @@ go run configbuilder.go --dir /path/to/your/directory
 For server modules, run:
 ```sh
 go run configbuilder.go --dir /path/to/your/directory --server
+```
+
+To perform a fresh installation using `nixos-install`, use the `--fresh-install` flag:
+```sh
+go run configbuilder.go --dir /path/to/your/directory --fresh-install
 ```
 
 This program is best built as a Go binary. You can build it yourself with:
