@@ -78,15 +78,6 @@ As of now, configbuilder supports setting up Snap packages on NixOS, via the [ni
 curl https://raw.githubusercontent.com/soltros/configbuilder/main/tools/snapd-installer.sh | sh
 ```
 
-### Note on `module-updater.go`
-
-To keep `.nix` modules in sync locally with the repo, run `module-updater.go` with:
-
-```sh
-go build module-updater.go
-sudo ./module-updater
-```
-
 ### Note on Standard Libraries
 
 The standard libraries (`fmt`, `os`, `os/exec`, `path/filepath`, `strings`, `log`, `io/ioutil`, `encoding/json`, `flag`) are part of the Go standard library and do not require separate installation. They are available by default with your Go installation.
