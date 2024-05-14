@@ -348,8 +348,8 @@ This program allows you to select NixOS modules, download them, generate a confi
    - Press 'q' to quit the program at any time.
 
 Examples:
-  configbuilder --dir /mnt/etc/nixos/
-  configbuilder --dir /mnt/etc/nixos/ --server
+  configbuilder --dir /etc/nixos/
+  configbuilder --dir /etc/nixos/ --server
   configbuilder --dir /mnt/etc/nixos/ --fresh-install
 `
 	fmt.Println(helpText)
