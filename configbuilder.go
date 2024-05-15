@@ -86,6 +86,9 @@ func createBackup(backupDir, configFile string) string {
 
 type downloadFinishedMsg struct{}
 type replaceUsernameFinishedMsg struct{}
+type runNixosFinishedMsg struct {
+	output string
+}
 
 func createWgetInputFile(modules []moduleItem) (string, error) {
 	tempFile, err := ioutil.TempFile("", "wget_input_*.txt")
@@ -314,7 +317,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.progressValue = 1.0
 		_, configContent := generateConfigurationNix(m.getModules())
 		m.mockContent = configContent
-		redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and use it as your configuration? (y/n)\n")
+		redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Create this file as your configuration? (y/n)\n")
 		m.textView = fmt.Sprintf("%s\n%s", redText, m.textView)
 		m.showConfirm = true
 	case string:
@@ -335,6 +338,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.loading = false
 		m.showOverlay = false
 		m.progressValue = 1.0
+		m.commandOutput = msg.output
 		m.textView += "NixOS installation/rebuild completed successfully.\n"
 	}
 
@@ -344,15 +348,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	helpView := `
-Controls:
-- Space: Toggle module selection
-- c: Create a backup of the current configuration
-- t: Download selected modules, generate configuration.nix, and run nixos-rebuild boot (needs confirmation)
-- y: Confirm action
-- n: Cancel action
-- q: Quit the program
-`
+	helpView := "Space: Toggle   c: Backup   t: Download/Gen/Run   y: Confirm   n: Cancel   q: Quit"
 
 	progressBar := m.progress.ViewAs(m.progressValue)
 
@@ -369,9 +365,9 @@ Controls:
 		Width(80).
 		Align(lipgloss.Center)
 
-	configBox := boxStyle.Render(fmt.Sprintf("Generated configuration.nix:\n\n%s", m.mockContent))
+	configBox := boxStyle.Render(fmt.Sprintf("%s", m.mockContent))
 
-	outputBox := boxStyle.Render(fmt.Sprintf("Command Output:\n\n%s", m.commandOutput))
+	outputBox := boxStyle.Render(fmt.Sprintf("%s", m.commandOutput))
 
 	if m.showOverlay {
 		return lipgloss.JoinVertical(lipgloss.Left,
@@ -383,6 +379,7 @@ Controls:
 	return lipgloss.JoinVertical(lipgloss.Left,
 		m.list.View(),
 		configBox,
+		outputBox,
 		progressBar,
 		m.textView,
 		helpView,
@@ -395,10 +392,6 @@ func (m model) getModules() []moduleItem {
 		modules[i] = m.list.Items()[i].(moduleItem)
 	}
 	return modules
-}
-
-type runNixosFinishedMsg struct {
-	output string
 }
 
 func runNixosCommand() tea.Cmd {
@@ -416,7 +409,7 @@ func runNixosCommand() tea.Cmd {
 
 		err := cmd.Run()
 		if err != nil {
-			return fmt.Sprintf("Failed to run %s: %s\nOutput: %s\nError: %s\n", strings.Join(cmd.Args, " "), err, stdout.String(), stderr.String())
+			return runNixosFinishedMsg{fmt.Sprintf("Failed to run %s: %s\nOutput: %s\nError: %s\n", strings.Join(cmd.Args, " "), err, stdout.String(), stderr.String())}
 		}
 
 		return runNixosFinishedMsg{stdout.String()}
@@ -508,3 +501,4 @@ func main() {
 		log.Fatalf("Error starting program: %s", err)
 	}
 }
+ 
