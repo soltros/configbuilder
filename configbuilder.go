@@ -243,16 +243,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(downloadModules(m.getModules()), tickCmd())
 		case "y":
 			if m.showConfirm {
-				configFile, configContent := generateConfigurationNix(m.getModules())
-				if err := os.WriteFile(configFile, []byte(configContent), 0644); err != nil {
-					m.textView += fmt.Sprintf("Error writing to configuration.nix: %s\n", err)
-				} else {
-					m.textView += "configuration.nix generated successfully.\n"
-					m.textView += runNixosCommand()
-				}
-				m.showConfirm = false
-				m.mockContent = ""
-				return m, nil
+				m.loading = true
+				return m, tea.Batch(runNixosCommand(), tickCmd())
 			}
 		case "n":
 			if m.showConfirm {
@@ -281,6 +273,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, tickCmd()
 		}
+	case runNixosFinishedMsg:
+		m.loading = false
+		m.progressValue = 1.0
+		m.textView += "NixOS installation/rebuild completed successfully.\n"
 	}
 
 	var cmd tea.Cmd
@@ -320,25 +316,22 @@ func (m model) getModules() []moduleItem {
 	return modules
 }
 
-func runNixosCommand() string {
-	var cmd *exec.Cmd
-	if freshInstall {
-		cmd = exec.Command("nixos-install", "--root", "/mnt")
-	} else {
-		cmd = exec.Command("nixos-rebuild", "boot")
-	}
+type runNixosFinishedMsg struct{}
 
-	var output strings.Builder
-	output.WriteString(fmt.Sprintf("Running %s...\n", strings.Join(cmd.Args, " ")))
-	cmd.Stdout = &output
-	cmd.Stderr = &output
-	err := cmd.Run()
-	if err != nil {
-		output.WriteString(fmt.Sprintf("Failed to run %s: %s\n", strings.Join(cmd.Args, " "), err))
-	} else {
-		output.WriteString(fmt.Sprintf("%s completed successfully.\n", strings.Join(cmd.Args, " ")))
+func runNixosCommand() tea.Cmd {
+	return func() tea.Msg {
+		var cmd *exec.Cmd
+		if freshInstall {
+			cmd = exec.Command("nixos-install", "--root", "/mnt")
+		} else {
+			cmd = exec.Command("nixos-rebuild", "boot")
+		}
+
+		if err := cmd.Run(); err != nil {
+			return fmt.Sprintf("Failed to run %s: %s\n", strings.Join(cmd.Args, " "), err)
+		}
+		return runNixosFinishedMsg{}
 	}
-	return output.String()
 }
 
 func printHelp() {
