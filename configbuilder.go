@@ -256,7 +256,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.downloading = false
 		_, configContent := generateConfigurationNix(m.getModules())
 		m.mockContent = configContent
-		redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and run nixos-rebuild boot? (y/n)\n")
+		redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and use it as your configuration? (y/n)\n")
 		m.textView += fmt.Sprintf("Generated configuration.nix:\n%s\n%s", configContent, redText)
 		m.showConfirm = true
 	case string:
