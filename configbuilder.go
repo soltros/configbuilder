@@ -208,12 +208,12 @@ func initialModel(modules []moduleItem) model {
 	l.SetFilteringEnabled(false)
 
 	return model{
-		list:        l,
-		textView:    "",
-		downloading: false,
-		progress:    progress.New(progress.WithDefaultGradient()),
-		progressValue: 0,
-		loading: false,
+		list:           l,
+		textView:       "",
+		downloading:    false,
+		progress:       progress.New(progress.WithDefaultGradient()),
+		progressValue:  0,
+		loading:        false,
 	}
 }
 
@@ -239,6 +239,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "t":
 			m.downloading = true
 			m.loading = true
+			m.progressValue = 0
 			return m, tea.Batch(downloadModules(m.getModules()), tickCmd())
 		case "y":
 			if m.showConfirm {
@@ -303,7 +304,7 @@ Controls:
 		downloadView = "Downloading...\n"
 	}
 
-	progressBar := m.progress.View(m.progressValue)
+	progressBar := m.progress.ViewAs(m.progressValue)
 
 	if m.showConfirm {
 		return lipgloss.JoinVertical(lipgloss.Left, m.list.View(), "\n\n"+m.mockContent+"\n"+progressBar+"\n"+m.textView+"\n"+helpView)
