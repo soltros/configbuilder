@@ -117,6 +117,11 @@ To perform a fresh installation using `nixos-install`, use the `--fresh-install`
 go run configbuilder.go --dir /path/to/your/directory --fresh-install
 ```
 
+To specify a new username and description, use the `--new-user` and `--user-description` flags:
+```sh
+go run configbuilder.go --dir /path/to/your/directory --new-user myusername --user-description "My Description"
+```
+
 This program is best built as a Go binary. You can build it yourself with:
 ```sh
 go build configbuilder.go
