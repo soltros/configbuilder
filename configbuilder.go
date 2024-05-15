@@ -11,8 +11,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -187,6 +189,9 @@ type model struct {
 	mockContent     string
 	runNixosRebuild bool
 	downloading     bool
+	progress        progress.Model
+	progressValue   float64
+	loading         bool
 }
 
 func initialModel(modules []moduleItem) model {
@@ -206,6 +211,9 @@ func initialModel(modules []moduleItem) model {
 		list:        l,
 		textView:    "",
 		downloading: false,
+		progress:    progress.New(progress.WithDefaultGradient()),
+		progressValue: 0,
+		loading: false,
 	}
 }
 
@@ -230,7 +238,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.textView += createBackup(backupDir, configFile)
 		case "t":
 			m.downloading = true
-			return m, downloadModules(m.getModules())
+			m.loading = true
+			return m, tea.Batch(downloadModules(m.getModules()), tickCmd())
 		case "y":
 			if m.showConfirm {
 				configFile, configContent := generateConfigurationNix(m.getModules())
@@ -254,6 +263,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case downloadFinishedMsg:
 		m.downloading = false
+		m.loading = false
+		m.progressValue = 1.0
 		_, configContent := generateConfigurationNix(m.getModules())
 		m.mockContent = configContent
 		redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and use it as your configuration? (y/n)\n")
@@ -261,6 +272,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.showConfirm = true
 	case string:
 		m.textView += msg
+	case progressFrameMsg:
+		if m.loading {
+			m.progressValue += 0.01
+			if m.progressValue > 1 {
+				m.progressValue = 1
+			}
+			return m, tickCmd()
+		}
 	}
 
 	var cmd tea.Cmd
@@ -284,10 +303,12 @@ Controls:
 		downloadView = "Downloading...\n"
 	}
 
+	progressBar := m.progress.View(m.progressValue)
+
 	if m.showConfirm {
-		return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), "\n\n"+m.mockContent+"\n"+m.textView+"\n"+helpView)
+		return lipgloss.JoinVertical(lipgloss.Left, m.list.View(), "\n\n"+m.mockContent+"\n"+progressBar+"\n"+m.textView+"\n"+helpView)
 	}
-	return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), "\n\n"+downloadView+m.textView+"\n"+helpView)
+	return lipgloss.JoinVertical(lipgloss.Left, m.list.View(), "\n\n"+downloadView+m.textView+"\n"+progressBar+"\n"+helpView)
 }
 
 func (m model) getModules() []moduleItem {
@@ -353,6 +374,14 @@ Examples:
   configbuilder --dir /mnt/etc/nixos/ --fresh-install
 `
 	fmt.Println(helpText)
+}
+
+type progressFrameMsg struct{}
+
+func tickCmd() tea.Cmd {
+	return tea.Tick(time.Millisecond*100, func(time.Time) tea.Msg {
+		return progressFrameMsg{}
+	})
 }
 
 func main() {
