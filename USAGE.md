@@ -39,13 +39,18 @@ To perform a fresh installation using `nixos-install`, use the `--fresh-install`
 go run configbuilder.go --dir /path/to/your/directory --fresh-install
 ```
 
+To specify a new username and description, use the `--new-user` and `--user-description` flags:
+
+```sh
+go run configbuilder.go --dir /path/to/your/directory --new-user myusername --user-description "My Description"
+```
+
 ### Built Binary
 
 It is recommended to build the program as a Go binary for better performance and ease of use. You can build it yourself with:
 
 ```sh
 go build configbuilder.go
-go build configbuilder-server.go
 ```
 
 ### Keybindings and Controls
@@ -63,7 +68,8 @@ go build configbuilder-server.go
 After selecting modules and initiating the process with `t`, the program will simulate the generation of the configuration file and display its content. You will be prompted to confirm the creation of the configuration file and running the appropriate NixOS command with the following red text:
 
 ```go
-redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and run nixos-rebuild boot or nixos-install? (y/n)\n")
+redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Create this file as your configuration? (y/n)\n")
+m.textView = fmt.Sprintf("%s\n%s", redText, m.textView)
 ```
 
 ## Notes
