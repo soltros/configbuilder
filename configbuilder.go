@@ -43,13 +43,14 @@ func (m moduleItem) Title() string {
 func (m moduleItem) Description() string { return "" }
 
 var (
-	textViewContent string
-	targetDir       string
-	repoURL         string
-	apiURL          string
-	showHelp        bool
-	freshInstall    bool
-	newUsername     string
+	textViewContent   string
+	targetDir         string
+	repoURL           string
+	apiURL            string
+	showHelp          bool
+	freshInstall      bool
+	newUsername       string
+	userDescription   string
 )
 
 func checkDependencies() {
@@ -184,7 +185,7 @@ func fetchModuleList() ([]moduleItem, error) {
 	return moduleItems, nil
 }
 
-func replaceUsernameInFiles(dir, oldUsername, newUsername string) error {
+func replaceUsernameInFiles(dir, oldUsername, newUsername, oldDescription, newDescription string) error {
 	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -195,6 +196,7 @@ func replaceUsernameInFiles(dir, oldUsername, newUsername string) error {
 				return err
 			}
 			output := strings.ReplaceAll(string(input), oldUsername, newUsername)
+			output = strings.ReplaceAll(output, oldDescription, newDescription)
 			if err = ioutil.WriteFile(path, []byte(output), info.Mode()); err != nil {
 				return err
 			}
@@ -203,12 +205,12 @@ func replaceUsernameInFiles(dir, oldUsername, newUsername string) error {
 	})
 }
 
-func replaceUsername(modules []moduleItem) tea.Cmd {
+func replaceUsernameAndDescription(modules []moduleItem) tea.Cmd {
 	return func() tea.Msg {
 		if newUsername != "" {
-			err := replaceUsernameInFiles(targetDir, "derrik", newUsername)
+			err := replaceUsernameInFiles(targetDir, "derrik", newUsername, "Derrik Diener", userDescription)
 			if err != nil {
-				return fmt.Sprintf("Failed to replace username: %s\n", err)
+				return fmt.Sprintf("Failed to replace username and description: %s\n", err)
 			}
 		}
 		return replaceUsernameFinishedMsg{}
@@ -279,7 +281,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.loading = true
 				cmds := []tea.Cmd{runNixosCommand(), tickCmd()}
 				if newUsername != "" {
-					cmds = append(cmds, replaceUsername(m.getModules()))
+					cmds = append(cmds, replaceUsernameAndDescription(m.getModules()))
 				}
 				return m, tea.Batch(cmds...)
 			}
@@ -289,7 +291,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.showConfirm = false
 				m.mockContent = ""
 				return m, nil
-			}
+			 }
 		}
 	case downloadFinishedMsg:
 		m.downloading = false
@@ -312,7 +314,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case replaceUsernameFinishedMsg:
 		m.loading = false
-		m.textView += "Username replaced successfully.\n"
+		m.textView += "Username and description replaced successfully.\n"
 	case runNixosFinishedMsg:
 		m.loading = false
 		m.progressValue = 1.0
@@ -379,11 +381,12 @@ func printHelp() {
 Usage: configbuilder [options]
 
 Options:
-  --dir            Target directory for the configuration (default: /etc/nixos/)
-  --server         Use server modules repository
-  --fresh-install  Perform a fresh installation using nixos-install
-  --new-user       Specify a new username to replace 'derrik' in downloaded modules
-  --help           Display this help message and exit
+  --dir                Target directory for the configuration (default: /etc/nixos/)
+  --server             Use server modules repository
+  --fresh-install      Perform a fresh installation using nixos-install
+  --new-user           Specify a new username to replace 'derrik' in downloaded modules
+  --user-description   Specify a new user description to replace 'Derrik Diener' in downloaded modules
+  --help               Display this help message and exit
 
 Description:
 This program allows you to select NixOS modules, download them, generate a configuration.nix file, and optionally run nixos-rebuild boot or nixos-install. It includes the following functionalities:
@@ -407,7 +410,7 @@ Examples:
   configbuilder --dir /etc/nixos/
   configbuilder --dir /etc/nixos/ --server
   configbuilder --dir /mnt/etc/nixos/ --fresh-install
-  configbuilder --dir /etc/nixos/ --new-user myusername
+  configbuilder --dir /etc/nixos/ --new-user myusername --user-description "My Description"
 `
 	fmt.Println(helpText)
 }
@@ -429,6 +432,7 @@ func main() {
 	flag.BoolVar(&useServerRepo, "server", false, "Use server modules repository")
 	flag.BoolVar(&freshInstall, "fresh-install", false, "Perform a fresh installation using nixos-install")
 	flag.StringVar(&newUsername, "new-user", "", "Specify a new username to replace 'derrik' in downloaded modules")
+	flag.StringVar(&userDescription, "user-description", "", "Specify a new user description to replace 'Derrik Diener' in downloaded modules")
 	flag.BoolVar(&showHelp, "help", false, "Display help")
 	flag.Parse()
 
