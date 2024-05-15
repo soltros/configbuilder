@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -218,15 +219,19 @@ func replaceUsernameAndDescription(modules []moduleItem) tea.Cmd {
 }
 
 type model struct {
-	list            list.Model
-	textView        string
-	showConfirm     bool
-	mockContent     string
-	runNixosRebuild bool
-	downloading     bool
-	progress        progress.Model
-	progressValue   float64
-	loading         bool
+	list             list.Model
+	textView         string
+	showConfirm      bool
+	mockContent      string
+	runNixosRebuild  bool
+	downloading      bool
+	progress         progress.Model
+	progressValue    float64
+	loading          bool
+	showOverlay      bool
+	overlayContent   string
+	modulesDownloaded bool
+	commandOutput    string
 }
 
 func initialModel(modules []moduleItem) model {
@@ -243,12 +248,16 @@ func initialModel(modules []moduleItem) model {
 	l.SetFilteringEnabled(false)
 
 	return model{
-		list:           l,
-		textView:       "",
-		downloading:    false,
-		progress:       progress.New(progress.WithDefaultGradient()),
-		progressValue:  0,
-		loading:        false,
+		list:              l,
+		textView:          "",
+		downloading:       false,
+		progress:          progress.New(progress.WithDefaultGradient()),
+		progressValue:     0,
+		loading:           false,
+		showOverlay:       false,
+		overlayContent:    "",
+		modulesDownloaded: false,
+		commandOutput:     "",
 	}
 }
 
@@ -272,17 +281,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			configFile := filepath.Join(targetDir, "configuration.nix")
 			m.textView += createBackup(backupDir, configFile)
 		case "t":
-			m.downloading = true
-			m.loading = true
-			m.progressValue = 0
-			return m, tea.Batch(downloadModules(m.getModules()), tickCmd())
+			if !m.modulesDownloaded {
+				m.downloading = true
+				m.loading = true
+				m.progressValue = 0
+				return m, tea.Batch(downloadModules(m.getModules()), tickCmd())
+			}
 		case "y":
 			if m.showConfirm {
 				m.loading = true
+				m.showOverlay = true
+				m.overlayContent = "Starting NixOS installation/rebuild..."
 				cmds := []tea.Cmd{runNixosCommand(), tickCmd()}
 				if newUsername != "" {
 					cmds = append(cmds, replaceUsernameAndDescription(m.getModules()))
+					m.overlayContent += fmt.Sprintf("\nReplacing username 'derrik' with '%s' and description 'Derrik Diener' with '%s'...", newUsername, userDescription)
 				}
+				m.modulesDownloaded = true
 				return m, tea.Batch(cmds...)
 			}
 		case "n":
@@ -291,7 +306,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.showConfirm = false
 				m.mockContent = ""
 				return m, nil
-			 }
+			}
 		}
 	case downloadFinishedMsg:
 		m.downloading = false
@@ -300,7 +315,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		_, configContent := generateConfigurationNix(m.getModules())
 		m.mockContent = configContent
 		redText := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("Are you sure you want to create this file and use it as your configuration? (y/n)\n")
-		m.textView += fmt.Sprintf("Generated configuration.nix:\n%s\n%s", configContent, redText)
+		m.textView = fmt.Sprintf("%s\n%s", redText, m.textView)
 		m.showConfirm = true
 	case string:
 		m.textView += msg
@@ -314,9 +329,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case replaceUsernameFinishedMsg:
 		m.loading = false
+		m.showOverlay = false
 		m.textView += "Username and description replaced successfully.\n"
 	case runNixosFinishedMsg:
 		m.loading = false
+		m.showOverlay = false
 		m.progressValue = 1.0
 		m.textView += "NixOS installation/rebuild completed successfully.\n"
 	}
@@ -337,17 +354,39 @@ Controls:
 - q: Quit the program
 `
 
-	downloadView := ""
-	if m.downloading {
-		downloadView = "Downloading...\n"
-	}
-
 	progressBar := m.progress.ViewAs(m.progressValue)
 
-	if m.showConfirm {
-		return lipgloss.JoinVertical(lipgloss.Left, m.list.View(), "\n\n"+m.mockContent+"\n"+progressBar+"\n"+m.textView+"\n"+helpView)
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.NormalBorder()).
+		Padding(1, 2).
+		BorderForeground(lipgloss.Color("62")).
+		Width(80)
+
+	overlayStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color("#000000")).
+		Foreground(lipgloss.Color("#ffffff")).
+		Padding(1, 2).
+		Width(80).
+		Align(lipgloss.Center)
+
+	configBox := boxStyle.Render(fmt.Sprintf("Generated configuration.nix:\n\n%s", m.mockContent))
+
+	outputBox := boxStyle.Render(fmt.Sprintf("Command Output:\n\n%s", m.commandOutput))
+
+	if m.showOverlay {
+		return lipgloss.JoinVertical(lipgloss.Left,
+			overlayStyle.Render(fmt.Sprintf("%s\n\n%s", m.overlayContent, progressBar)),
+			outputBox,
+		)
 	}
-	return lipgloss.JoinVertical(lipgloss.Left, m.list.View(), "\n\n"+downloadView+m.textView+"\n"+progressBar+"\n"+helpView)
+
+	return lipgloss.JoinVertical(lipgloss.Left,
+		m.list.View(),
+		configBox,
+		progressBar,
+		m.textView,
+		helpView,
+	)
 }
 
 func (m model) getModules() []moduleItem {
@@ -358,7 +397,9 @@ func (m model) getModules() []moduleItem {
 	return modules
 }
 
-type runNixosFinishedMsg struct{}
+type runNixosFinishedMsg struct {
+	output string
+}
 
 func runNixosCommand() tea.Cmd {
 	return func() tea.Msg {
@@ -369,10 +410,16 @@ func runNixosCommand() tea.Cmd {
 			cmd = exec.Command("nixos-rebuild", "boot")
 		}
 
-		if err := cmd.Run(); err != nil {
-			return fmt.Sprintf("Failed to run %s: %s\n", strings.Join(cmd.Args, " "), err)
+		var stdout, stderr bytes.Buffer
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+
+		err := cmd.Run()
+		if err != nil {
+			return fmt.Sprintf("Failed to run %s: %s\nOutput: %s\nError: %s\n", strings.Join(cmd.Args, " "), err, stdout.String(), stderr.String())
 		}
-		return runNixosFinishedMsg{}
+
+		return runNixosFinishedMsg{stdout.String()}
 	}
 }
 
