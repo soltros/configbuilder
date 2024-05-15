@@ -49,6 +49,7 @@ var (
 	apiURL          string
 	showHelp        bool
 	freshInstall    bool
+	newUsername     string
 )
 
 func checkDependencies() {
@@ -82,6 +83,7 @@ func createBackup(backupDir, configFile string) string {
 }
 
 type downloadFinishedMsg struct{}
+type replaceUsernameFinishedMsg struct{}
 
 func createWgetInputFile(modules []moduleItem) (string, error) {
 	tempFile, err := ioutil.TempFile("", "wget_input_*.txt")
@@ -182,6 +184,37 @@ func fetchModuleList() ([]moduleItem, error) {
 	return moduleItems, nil
 }
 
+func replaceUsernameInFiles(dir, oldUsername, newUsername string) error {
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && strings.HasSuffix(path, ".nix") {
+			input, err := ioutil.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			output := strings.ReplaceAll(string(input), oldUsername, newUsername)
+			if err = ioutil.WriteFile(path, []byte(output), info.Mode()); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
+func replaceUsername(modules []moduleItem) tea.Cmd {
+	return func() tea.Msg {
+		if newUsername != "" {
+			err := replaceUsernameInFiles(targetDir, "derrik", newUsername)
+			if err != nil {
+				return fmt.Sprintf("Failed to replace username: %s\n", err)
+			}
+		}
+		return replaceUsernameFinishedMsg{}
+	}
+}
+
 type model struct {
 	list            list.Model
 	textView        string
@@ -244,7 +277,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "y":
 			if m.showConfirm {
 				m.loading = true
-				return m, tea.Batch(runNixosCommand(), tickCmd())
+				cmds := []tea.Cmd{runNixosCommand(), tickCmd()}
+				if newUsername != "" {
+					cmds = append(cmds, replaceUsername(m.getModules()))
+				}
+				return m, tea.Batch(cmds...)
 			}
 		case "n":
 			if m.showConfirm {
@@ -273,6 +310,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, tickCmd()
 		}
+	case replaceUsernameFinishedMsg:
+		m.loading = false
+		m.textView += "Username replaced successfully.\n"
 	case runNixosFinishedMsg:
 		m.loading = false
 		m.progressValue = 1.0
@@ -342,6 +382,7 @@ Options:
   --dir            Target directory for the configuration (default: /etc/nixos/)
   --server         Use server modules repository
   --fresh-install  Perform a fresh installation using nixos-install
+  --new-user       Specify a new username to replace 'derrik' in downloaded modules
   --help           Display this help message and exit
 
 Description:
@@ -366,6 +407,7 @@ Examples:
   configbuilder --dir /etc/nixos/
   configbuilder --dir /etc/nixos/ --server
   configbuilder --dir /mnt/etc/nixos/ --fresh-install
+  configbuilder --dir /etc/nixos/ --new-user myusername
 `
 	fmt.Println(helpText)
 }
@@ -386,6 +428,7 @@ func main() {
 	flag.StringVar(&dir, "dir", "/etc/nixos/", "Target directory for the configuration")
 	flag.BoolVar(&useServerRepo, "server", false, "Use server modules repository")
 	flag.BoolVar(&freshInstall, "fresh-install", false, "Perform a fresh installation using nixos-install")
+	flag.StringVar(&newUsername, "new-user", "", "Specify a new username to replace 'derrik' in downloaded modules")
 	flag.BoolVar(&showHelp, "help", false, "Display help")
 	flag.Parse()
 
