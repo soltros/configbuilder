@@ -222,18 +222,19 @@ func replaceUsernameAndDescription(modules []moduleItem) tea.Cmd {
 }
 
 type model struct {
-    list             list.Model
-    textView         string
-    showConfirm      bool
-    mockContent      string
-    downloading      bool
-    progress         progress.Model
-    progressValue    float64
-    loading          bool
-    showOverlay      bool
-    overlayContent   string
+    list              list.Model
+    textView          string
+    showConfirm       bool
+    mockContent       string
+    downloading       bool
+    progress          progress.Model
+    progressValue     float64
+    loading           bool
+    showOverlay       bool
+    overlayContent    string
     modulesDownloaded bool
-    commandOutput    string
+    commandOutput     string
+    downloadInProgress bool
 }
 
 func initialModel(modules []moduleItem) model {
@@ -260,6 +261,7 @@ func initialModel(modules []moduleItem) model {
         overlayContent:    "",
         modulesDownloaded: false,
         commandOutput:     "",
+        downloadInProgress: false, // Initialize downloadInProgress to false
     }
 }
 
@@ -285,10 +287,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             m.commandOutput += backupMsg  // Ensure output is added to the commandOutput
             return m, nil
         case "t":
-            if !m.modulesDownloaded {
+            if !m.modulesDownloaded && !m.downloadInProgress { // Check if download is not already in progress
                 m.downloading = true
                 m.loading = true
                 m.progressValue = 0
+                m.downloadInProgress = true // Set downloadInProgress to true when starting the download
                 return m, tea.Batch(downloadModules(m.getModules()), tickCmd())
             }
         case "y":
@@ -317,6 +320,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         m.downloading = false
         m.loading = false
         m.progressValue = 1.0
+        m.modulesDownloaded = true // Set modulesDownloaded to true after download completes
+        m.downloadInProgress = false // Reset downloadInProgress after download completes
         _, configContent := generateConfigurationNix(m.getModules())
         m.mockContent = configContent
         m.commandOutput += "Modules downloaded and configuration generated.\n"  // Append additional messages
@@ -335,14 +340,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         m.progressValue = 1.0
         m.commandOutput += fmt.Sprintf("NixOS configuration generated: %s\n", msg.output)
         return m, nil
+    case progressFrameMsg:
+        if m.loading {
+            m.progressValue += 0.01
+            if m.progressValue > 1.0 {
+                m.progressValue = 1.0
+            }
+            return m, tickCmd()
+        }
     }
 
     var cmd tea.Cmd
     m.list, cmd = m.list.Update(msg)
     return m, cmd
 }
-
-// Adjust other functions similarly if they produce output that should be displayed
 
 func (m model) View() string {
     helpView := "Space: Toggle   c: Backup   t: Download/Generate   y: Confirm   n: Cancel   q: Quit"
