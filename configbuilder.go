@@ -292,16 +292,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "y":
 			if m.showConfirm {
-				m.loading = true
-				m.showOverlay = true
-				m.overlayContent = "Starting NixOS installation/rebuild..."
-				cmds := []tea.Cmd{runNixosCommand(), tickCmd()}
-				if newUsername != "" {
-					cmds = append(cmds, replaceUsernameAndDescription(m.getModules()))
-					m.overlayContent += fmt.Sprintf("\nReplacing username 'derrik' with '%s' and description 'Derrik Diener' with '%s'...", newUsername, userDescription)
+				configFile, configContent := generateConfigurationNix(m.getModules())
+				err := ioutil.WriteFile(configFile, []byte(configContent), 0644)
+				if err != nil {
+					m.textView += fmt.Sprintf("Failed to write configuration: %s\n", err)
+				} else {
+					m.textView += "Configuration written successfully.\n"
 				}
-				m.modulesDownloaded = true
-				return m, tea.Batch(cmds...)
+				m.loading = false
+				m.showConfirm = false
+				return m, nil
 			}
 		case "n":
 			if m.showConfirm {
@@ -501,4 +501,3 @@ func main() {
 		log.Fatalf("Error starting program: %s", err)
 	}
 }
- 
