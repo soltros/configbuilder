@@ -226,7 +226,6 @@ type model struct {
     textView         string
     showConfirm      bool
     mockContent      string
-    runNixosRebuild  bool
     downloading      bool
     progress         progress.Model
     progressValue    float64
@@ -334,7 +333,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         m.loading = false
         m.showOverlay = false
         m.progressValue = 1.0
-        m.commandOutput += fmt.Sprintf("NixOS installation/rebuild completed successfully: %s\n", msg.output)
+        m.commandOutput += fmt.Sprintf("NixOS configuration generated: %s\n", msg.output)
         return m, nil
     }
 
@@ -346,7 +345,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // Adjust other functions similarly if they produce output that should be displayed
 
 func (m model) View() string {
-    helpView := "Space: Toggle   c: Backup   t: Download/Gen/Run   y: Confirm   n: Cancel   q: Quit"
+    helpView := "Space: Toggle   c: Backup   t: Download/Generate   y: Confirm   n: Cancel   q: Quit"
 
     progressBar := m.progress.ViewAs(m.progressValue)
 
@@ -421,13 +420,13 @@ Usage: configbuilder [options]
 Options:
   --dir                Target directory for the configuration (default: /etc/nixos/)
   --server             Use server modules repository
-  --fresh-install      Perform a fresh installation using nixos-install
+  --fresh-install      Generate a configuration on a fresh installation and use nix-install
   --new-user           Specify a new username to replace 'derrik' in downloaded modules
   --user-description   Specify a new user description to replace 'Derrik Diener' in downloaded modules
   --help               Display this help message and exit
 
 Description:
-This program allows you to select NixOS modules, download them, generate a configuration.nix file, and optionally run nixos-rebuild boot or nixos-install. It includes the following functionalities:
+This program allows you to select NixOS modules, download them, and generate a configuration.nix file with the files in it It includes the following functionalities:
 
 1. Module Selection:
    - Use the arrow keys to navigate the list of available modules.
@@ -437,8 +436,8 @@ This program allows you to select NixOS modules, download them, generate a confi
    - Press 'c' to create a backup of the current configuration.nix file in the target directory.
 
 3. Download, Generate, and Rebuild:
-   - Press 't' to download the selected modules, generate the configuration.nix file, and display the generated content for confirmation.
-   - If you confirm with 'y', the configuration file is created, and nixos-rebuild boot or nixos-install is triggered.
+   - Press 't' to download the selected modules, and generate the configuration.nix file, and display the generated content for confirmation.
+   - If you confirm with 'y', the configuration file is created.
    - If you cancel with 'n', the operation is aborted.
 
 4. Help:
@@ -468,7 +467,7 @@ func main() {
     var useServerRepo bool
     flag.StringVar(&dir, "dir", "/etc/nixos/", "Target directory for the configuration")
     flag.BoolVar(&useServerRepo, "server", false, "Use server modules repository")
-    flag.BoolVar(&freshInstall, "fresh-install", false, "Perform a fresh installation using nixos-install")
+    flag.BoolVar(&freshInstall, "fresh-install", false, "Generate your configurations on a fresh system rather than on an existing system")
     flag.StringVar(&newUsername, "new-user", "", "Specify a new username to replace 'derrik' in downloaded modules")
     flag.StringVar(&userDescription, "user-description", "", "Specify a new user description to replace 'Derrik Diener' in downloaded modules")
     flag.BoolVar(&showHelp, "help", false, "Display help")
