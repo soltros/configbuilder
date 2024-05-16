@@ -6,7 +6,7 @@
 
   # Specifies the device for the GRUB bootloader installation.
   # Replace '/dev/sdX' with the appropriate device identifier, e.g., '/dev/sda'.
-  boot.loader.grub.device = "/dev/sda"; 
+  boot.loader.grub.devices = [ "/dev/sda" ]; 
 
   # Specifies that the system is not EFI-based.
   boot.loader.grub.efiSupport = false;
