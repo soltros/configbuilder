@@ -24,5 +24,5 @@
   # };
 
   # Optional: Enable or disable generation of the GRUB 2 menu entries.
-  # boot.loader.grub.generateGrubMenuEntries = true;
+  boot.loader.grub.generateGrubMenuEntries = true;
 }
