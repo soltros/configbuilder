@@ -6,7 +6,7 @@ upgrade_nixos_and_add_channel() {
     echo "Downgrading and adding channel..."
 
     # Downgrade NixOS to Latest release
-    sudo nix-channel --add https://nixos.org/channels/nixos-23.11 nixos
+    sudo nix-channel --add https://nixos.org/channels/nixos-24.05 nixos
     sudo nix-channel --update
 
     # Rebuild NixOS with the new configuration
