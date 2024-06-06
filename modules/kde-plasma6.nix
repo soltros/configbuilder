@@ -3,9 +3,9 @@
 {
   # Plasma 6
   services.xserver.enable = true;
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.displayManager.defaultSession = "plasma";
-  services.xserver.displayManager.sddm.wayland.enable = false;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.defaultSession = "plasma";
+  services.displayManager.sddm.wayland.enable = false;
   services.desktopManager.plasma6.enable = true;
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [ ];
