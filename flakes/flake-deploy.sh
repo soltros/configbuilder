@@ -18,6 +18,8 @@ execute_command() {
             git init
             git add .
             git commit -m "Initial commit"
+            git config --global user.email "soltros@proton.me"
+            git config --global user.name "Derrik Diener"
             wget https://raw.githubusercontent.com/soltros/configbuilder/main/flakes/flake.nix.desktop -O flake.nix
             wget https://raw.githubusercontent.com/soltros/nixconfigs/main/misc/nix-cleanup.sh
             chmod +x nix-cleanup.sh
