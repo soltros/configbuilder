@@ -5,130 +5,115 @@
 
   outputs = { self, nixpkgs }: {
     nixosConfigurations = {
-      # NOTE: change "host" to your system's hostname
       b450m-d3sh = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+
         modules = [
+          # Base system settings
           {
-            nix.settings = {
-              # If you have other substituters or trusted-public-keys, add them here
+            # Ensure the Nix package manager can handle Flakes
+            nix = {
+              package = pkgs.nixFlakes;
+              extraOptions = "experimental-features = nix-command flakes";
             };
 
-            # Enable automatic updates
+            # Basic system configuration
+            networking.hostName = "b450m-d3sh";
+            networking.networkmanager.enable = true;
+            time.timeZone = "America/Detroit";
+            i18n.defaultLocale = "en_US.UTF-8";
+
+            # Enable automatic system upgrades
             systemd.timers.nixos-upgrade = {
               enable = true;
               timerConfig.OnCalendar = "weekly";
               wantedBy = [ "timers.target" ];
             };
-
             systemd.services.nixos-upgrade = {
               script = "${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --upgrade";
               serviceConfig.Type = "oneshot";
             };
 
-            # Enable systemd-boot as the bootloader
-            boot.loader.systemd-boot.enable = true;
-            boot.loader.efi.canTouchEfiVariables = true;
-
-            # Add packages to the system environment
-            environment.systemPackages = with pkgs; [
-              bitwarden spot git keepassxc python312 appimage-run papirus-icon-theme
-              gnome.dconf-editor libreoffice-qt gnome.gnome-tweaks spotify tailscale vlc gimp
-              wget libsForQt5.ghostwriter winetricks wine-staging pavucontrol fluffychat distrobox
-              geany thunderbird ntfs3g appimage-run firefox flatpak mullvad-vpn discord kopia
-              tdesktop flameshot microsoft-edge ollama screen nodejs pipx ncdu nvtop
-              python311Packages.pip caffeine-ng php adapta-gtk-theme mlocate yt-dlp
-              waybar wofi networkmanagerapplet kitty mako swaybg swaylock grim slurp jq
-              wl-clipboard notify-desktop libnotify playerctl pamixer swayidle emojione xclip
-              sway-contrib.grimshot gthumb xfce.thunar-archive-plugin xfce.thunar-volman unzip
-              gnome.file-roller lxrandr pinta okular cinnamon.nemo-with-extensions plex-media-player
-              virt-manager
-            ];
-
-            # Fish Shell support
-            users.users.derrik.shell = pkgs.fish;
-            programs.fish.enable = true;
-
-            # Enable Nix command support for Flakes
-            nix = {
-              package = pkgs.nixFlakes;
-              extraOptions = ''
-                experimental-features = nix-command flakes
-              '';
-            };
-
-            # Flatpak support
-            services.flatpak.enable = true;
-            xdg.portal.enable = true;
-
-            # Nix garbage collection
+            # Garbage collection settings
             nix.gc = {
               automatic = true;
               dates = "weekly";
               options = "--max-age 3d";
             };
+          }
 
-            # Plasma 6
+
+          # Desktop Environment (Plasma 6)
+          {
             services.xserver.enable = true;
             services.displayManager.sddm.enable = true;
             services.displayManager.defaultSession = "plasma";
             services.displayManager.sddm.wayland.enable = false;
             services.desktopManager.plasma6.enable = true;
-            environment.plasma6.excludePackages = with pkgs.kdePackages; [ ];
             programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-qt;
+          }
 
-            # Networking configuration
-            networking.hostName = "b450m-d3sh";
-            networking.networkmanager.enable = true;
+          # Software Packages
+          {
+            environment.systemPackages = with pkgs; [
+              # Essentials
+              git keepassxc bitwarden python3 appimage-run papirus-icon-theme
+              gnome.dconf-editor libreoffice-qt gnome.gnome-tweaks spotify tailscale vlc
+              gimp wget libsForQt5.ghostwriter wine-staging pavucontrol fluffychat distrobox
+              geany thunderbird ntfs3g firefox flatpak mullvad-vpn discord kopia tdesktop
+              flameshot microsoft-edge ollama screen nodejs pipx ncdu nvtop php 
+              adapta-gtk-theme mlocate yt-dlp waybar wofi networkmanagerapplet kitty mako
+              swaybg swaylock grim slurp jq wl-clipboard notify-desktop libnotify playerctl
+              pamixer swayidle emojione xclip sway-contrib.grimshot gthumb 
+              xfce.thunar-archive-plugin xfce.thunar-volman unzip gnome.file-roller lxrandr
+              pinta okular cinnamon.nemo-with-extensions plex-media-player virt-manager
 
-            # Reboot on resume
-            options.services.rebootOnResume = {
-              enable = lib.mkEnableOption "whether to restart tailscaled and NetworkManager on system resume";
+              # Additional Tools
+              fish nfs-utils nvidiaPackages.stable podman cups openssh
+
+              # Programming Languages
+              python311Packages.pip python312
+            ];
+          }
+
+
+          # Fish Shell
+          {
+            users.users.derrik = {
+              isNormalUser = true;
+              description = "Derrik Diener";
+              shell = pkgs.fish;
+              extraGroups = [ "networkmanager" "wheel" "vboxusers" ]; 
             };
-            config = lib.mkIf config.services.rebootOnResume.enable {
-              systemd.services.rebootOnResume = {
-                description = "Restart tailscaled and NetworkManager after resume";
-                script = ''
-                  #!/bin/sh
-                  /run/current-system/sw/bin/sleep 5
-                  /run/current-system/sw/bin/systemctl restart tailscaled
-                  /run/current-system/sw/bin/systemctl restart NetworkManager
-                '';
-                serviceConfig.Type = "oneshot";
-                path = [ pkgs.coreutils pkgs.systemd ];
-              };
-              environment.etc."systemd/system-sleep/rebootOnResume.sh".source = pkgs.writeShellScriptBin "rebootOnResume.sh" ''
-                #!/bin/sh
-                case $1/$2 in
-                  pre/*)
-                    ;;
-                  post/*)
-                    systemctl start rebootOnResume.service
-                    ;;
-                esac
-              '';
-            };
+            programs.fish.enable = true;
+          }
 
-            # NFS support
-            environment.systemPackages = with pkgs; [ nfs-utils ];
-            services.rpcbind.enable = true;
 
-            # OpenGL support
-            hardware.opengl = {
+          # Flatpak and XDG
+          {
+            services.flatpak.enable = true;
+            xdg.portal.enable = true;
+          }
+
+
+          # Virtualization
+          {
+            virtualisation.podman = {
               enable = true;
-              driSupport = true;
-              driSupport32Bit = true;
-            };
-            services.xserver.videoDrivers = ["nvidia"];
-            hardware.nvidia = {
-              modesetting.enable = true;
-              powerManagement.enable = false;
-              powerManagement.finegrained = false;
-              open = false;
-              nvidiaSettings = true;
-              package = config.boot.kernelPackages.nvidiaPackages.stable;
+              dockerCompat = true;
+              defaultNetwork.settings.dns_enabled = true;
             };
 
-            # Pipewire support
+            virtualisation.virtualbox.host.enable = true;
+            boot.kernelModules = [ "vboxdrv" "vboxnetadp" "vboxnetflt" "vboxpci" ];
+            virtualisation.libvirtd.enable = true;
+
+            virtualisation.waydroid.enable = true;
+          }
+
+          # Other Services and Drivers
+          {
+            services.printing.enable = true;
             sound.enable = true;
             hardware.pulseaudio.enable = false;
             security.rtkit.enable = true;
@@ -138,76 +123,33 @@
               alsa.support32Bit = true;
               pulse.enable = true;
             };
-
-            # Podman support
-            virtualisation.podman = {
-              enable = true;
-              dockerCompat = true;
-              defaultNetwork.settings.dns_enabled = true;
-            };
-
-            # CUPS support
-            services.printing.enable = true;
-
-            # OpenSSH support
-            services.openssh.enable = true;
-            programs.gnupg.agent = {
-              enable = true;
-              enableSSHSupport = true;
-            };
-
-            # Swap device configuration
-            swapDevices = [
-              {
-                device = "/var/lib/swapfile";
-                size = 4 * 1024; # Size in MB for a 4GB swap file
-              }
-            ];
-
-            # Tailscale support
             services.tailscale.enable = true;
             networking.firewall.checkReversePath = "loose";
-
-            # Time zone and locale settings
-            time.timeZone = "America/Detroit";
-            i18n.defaultLocale = "en_US.UTF-8";
-            i18n.extraLocaleSettings = {
-              LC_ADDRESS = "en_US.UTF-8";
-              LC_IDENTIFICATION = "en_US.UTF-8";
-              LC_MEASUREMENT = "en_US.UTF-8";
-              LC_MONETARY = "en_US.UTF-8";
-              LC_NAME = "en_US.UTF-8";
-              LC_NUMERIC = "en_US.UTF-8";
-              LC_PAPER = "en_US.UTF-8";
-              LC_TELEPHONE = "en_US.UTF-8";
-              LC_TIME = "en_US.UTF-8";
+            hardware.opengl = {
+              enable = true;
+              driSupport = true;
+              driSupport32Bit = true;
             };
+            services.xserver.videoDrivers = [ "nvidia" ];
+          }
 
-            # Allow unfree packages
-            nixpkgs.config.allowUnfree = true;
-
-            # Permitted insecure packages
-            nixpkgs.config.permittedInsecurePackages = [
-              "electron-24.8.6"
-              "electron-25.9.0"
+          # Swap
+          {
+            swapDevices = [
+              { device = "/var/lib/swapfile"; size = 4096; }
             ];
+          }
 
-            # User account configuration
-            users.users.derrik = {
-              isNormalUser = true;
-              description = "Derrik Diener";
-              extraGroups = [ "networkmanager" "wheel" ];
-            };
-
-            # VirtualBox support
-            virtualisation.virtualbox.host.enable = true;
-            boot.kernelParams = [ "vboxdrv.load_state=1" ];
-            boot.kernelModules = [ "vboxdrv" "vboxnetadp" "vboxnetflt" "vboxpci" ];
-            users.extraGroups.vboxusers.members = [ "derrik" ];
-            virtualisation.libvirtd.enable = true;
-
-            # WayDroid support
-            virtualisation.waydroid.enable = true;
+          # NVIDIA (optional - include only if you have an NVIDIA GPU)
+          { 
+            hardware.nvidia = {
+              modesetting.enable = true;
+              powerManagement.enable = false;
+              powerManagement.finegrained = false;
+              open = false;
+              nvidiaSettings = true;
+              package = config.boot.kernelPackages.nvidiaPackages.stable;
+            }; 
           }
         ];
       };
