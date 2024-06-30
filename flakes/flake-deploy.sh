@@ -14,7 +14,7 @@ show_menu() {
 execute_command() {
     case $choice in
         1)
-            cd /etc/nixos/
+            cd /etc/nixos/ || { echo "Failed to change directory to /etc/nixos/"; return; }
             git init
             git add .
             git commit -m "Initial commit"
@@ -24,20 +24,18 @@ execute_command() {
             echo "Setting up flake..."
             ;;
         2)
-            curl https://raw.githubusercontent.com/soltros/nixpkg.py/main/tools/install.sh | sh
-            curl https://raw.githubusercontent.com/soltros/nixpkg.py/main/update.sh | sh
-
+            curl https://raw.githubusercontent.com/soltros/nixpkg.py/main/tools/install.sh | bash
+            curl https://raw.githubusercontent.com/soltros/nixpkg.py/main/update.sh | bash
             echo "Setting up Nixpkg.py package manager..."
             ;;
         3)
             python /home/derrik/scripts/nixpkg.py update
             echo "Updating NixOS..."
             ;;
-        4)  
-            sudo nixos-rebuild switch --flake /etc/nixos/b450m-d3sh#flake.nix
+        4)
+            sudo nixos-rebuild switch --flake /etc/nixos#b450m-d3sh
             echo "Deploying flake..."
             ;;
-        
         5)
             echo "Exiting..."
             exit 0
