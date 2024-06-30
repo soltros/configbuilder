@@ -22,6 +22,7 @@ execute_command() {
             git config --global user.name "Derrik Diener"
             wget https://raw.githubusercontent.com/soltros/configbuilder/main/flakes/flake.nix.desktop -O flake.nix
             wget https://raw.githubusercontent.com/soltros/nixconfigs/main/misc/nix-cleanup.sh
+            wget https://raw.githubusercontent.com/soltros/configbuilder/main/flakes/configuration.nix
             chmod +x nix-cleanup.sh
             echo "Setting up flake..."
             ;;
