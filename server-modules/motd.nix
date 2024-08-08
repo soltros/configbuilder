@@ -10,7 +10,6 @@ let
       *  Uptime: $(uptime -p)
       *  Load average: $(cat /proc/loadavg | awk '{print $1" "$2" "$3}')
       *  Memory usage: $(free -h | awk 'NR==2 {print $3" "$4}')
-      
     '';
 in
 
@@ -18,8 +17,4 @@ in
   environment.systemPackages = [
     motd
   ];
-
-  programs.fish.interactiveShellInit =  ''
-    motd
-  '';
 }
