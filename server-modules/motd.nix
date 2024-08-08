@@ -5,7 +5,7 @@
     (writeShellScriptBin "motd" ''
       #! /usr/bin/env bash
       echo "
-      *Welcome to ${config.networking.hostName}
+      *  Welcome to ${config.networking.hostName}
       *  This is a NixOS server, running on ${config.boot.kernelPackages.kernel.version}  
       *  Uptime: $(uptime)
       *  Load average: $(cat /proc/loadavg | awk '{print $1" "$2" "$3}')
