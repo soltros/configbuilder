@@ -5,7 +5,7 @@
 
 This Nix Configuration Manager is a Go-based tool designed to facilitate the management of NixOS configurations. It allows users to select and download specific Nix modules and generates a new `configuration.nix` file based on the selected modules. The program also includes a backup feature that saves the current `configuration.nix` file before generating a new one.
 
-##***Psst, check out my other project https://github.com/soltros/nixpkg.py if you're deploying a NixOS system with Configbuilder. It makes managing packages on NixOS much easier.***
+## ***Psst, check out my other project https://github.com/soltros/nixpkg.py if you're deploying a NixOS system with Configbuilder. It makes managing packages on NixOS much easier.***
 
 ## Prerequisites
 
