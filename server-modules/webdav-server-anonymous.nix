@@ -23,7 +23,7 @@ in {
 addr = "0.0.0.0"
 port = ${toString webdavPort}
 
-[location]
+[[location]]
 route = "/"
 allow = ["0.0.0.0/0"]
 
