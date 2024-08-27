@@ -16,7 +16,7 @@
     vlc
     gimp
     wget
-    libsForQt5.ghostwriter
+    zettlr
     winetricks
     wine-staging
     pavucontrol
