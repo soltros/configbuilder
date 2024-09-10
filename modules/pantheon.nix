@@ -1,25 +1,16 @@
-{ config, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 
 {
-  # Enable X server and LightDM
-  services.xserver.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.pantheon.enable = true;
 
-  # Enable Pantheon Tweaks and Flatpak
-  programs.pantheon-tweaks.enable = true;
-  services.flatpak.enable = true;
+  # Exclude the elementary apps you don't use
+  environment.pantheon.excludePackages = with pkgs.pantheon; [
+    elementary-music
+    elementary-photos
+    elementary-videos
+    epiphany
+  ];
 
-  # Exclude the elementary apps I don't use
-  environment = {
-    pantheon.excludePackages = with pkgs.pantheon; [
-      elementary-music
-      elementary-photos
-      elementary-videos
-      epiphany
-    ];
-
-  # System packages
+  # Add additional apps and include Yaru for syntax highlighting
   environment.systemPackages = with pkgs; [
     appeditor                   # elementary OS menu editor
     celluloid                   # Video Player
@@ -29,20 +20,39 @@
     indicator-application-gtk3  # App Indicator
     pantheon.sideload           # elementary OS Flatpak installer
     torrential                  # elementary OS torrent client
-    yaru-theme
+    yaru-theme                  # Yaru theme
   ];
 
-  # GNOME Disks, Pantheon Tweaks and Seahorse
-  programs.gnome-disks.enable = true;
-  programs.seahorse.enable = true;
+  # Enable GNOME Disks, Pantheon Tweaks, and Seahorse
+  programs = {
+    gnome-disks.enable = true;
+    pantheon-tweaks.enable = true;
+    seahorse.enable = true;
+  };
 
-  # X server configuration for Pantheon
-  services.xserver.desktopManager.pantheon.extraWingpanelIndicators = with pkgs; [
-    monitor
-    wingpanel-indicator-ayatana
-  ];
+  # Services configuration
+  services = {
+    flatpak.enable = true;
+    pantheon.apps.enable = true;
 
-  # App indicator service
+    xserver = {
+      enable = true;
+      displayManager = {
+        lightdm.enable = true;
+        lightdm.greeters.pantheon.enable = true;
+      };
+
+      desktopManager.pantheon = {
+        enable = true;
+        extraWingpanelIndicators = with pkgs; [
+          monitor
+          wingpanel-indicator-ayatana
+        ];
+      };
+    };
+  };
+
+  # App indicator systemd service
   systemd.user.services.indicatorapp = {
     description = "indicator-application-gtk3";
     wantedBy = [ "graphical-session.target" ];
@@ -51,4 +61,7 @@
       ExecStart = "${pkgs.indicator-application-gtk3}/libexec/indicator-application/indicator-application-service";
     };
   };
+
+  # Link paths for app indicators
+  environment.pathsToLink = [ "/libexec" ];
 }
