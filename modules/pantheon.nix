@@ -32,7 +32,6 @@
 
   # Services configuration
   services = {
-    flatpak.enable = true;
     pantheon.apps.enable = true;
 
     xserver = {
