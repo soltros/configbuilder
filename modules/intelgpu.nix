@@ -21,6 +21,5 @@ with lib;
 
     # Optional: Enable VA-API (Video Acceleration API) for better video playback performance
     services.xserver.videoDrivers = [ "modesetting" ];
-    hardware.video.accelerated = true;
   };
 }
