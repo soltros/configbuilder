@@ -3,6 +3,7 @@
  # Search for packages: https://nur.nix-community.org/repos/
  # https://nur.nix-community.org/documentation/
  # https://github.com/nix-community/NUR
+ # You may need to rebuild with nixos-rebuild switch --impure
  
 {
   nixpkgs.config.packageOverrides = pkgs: {
