@@ -1,5 +1,9 @@
 { config, pkgs, ... }:
 
+ # Search for packages: https://nur.nix-community.org/repos/
+ # https://nur.nix-community.org/documentation/
+ # https://github.com/nix-community/NUR
+ 
 {
   nixpkgs.config.packageOverrides = pkgs: {
     nur = import (builtins.fetchTarball {
