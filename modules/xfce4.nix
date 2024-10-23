@@ -16,7 +16,7 @@
 
   # Install XFCE Whisker Menu Plugin and other plugins
   environment.systemPackages = with pkgs; [
-    xfce.xfce4-whiskermenu-plugin xfce.xfce4-docklike-plugin xfce.xfce4-panel-profiles xfce.xfce4-pulseaudio-plugin alacarte pantheon.sideload pantheon.appcenter simp1e-cursors
+    xfce.xfce4-whiskermenu-plugin xfce.xfce4-docklike-plugin xfce.xfce4-panel-profiles xfce.xfce4-pulseaudio-plugin alacarte pantheon.sideload pantheon.appcenter simp1e-cursors xfce.catfish
   ];
 
   # Configuring XDG portal with specific backend settings
