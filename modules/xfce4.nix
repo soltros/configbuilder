@@ -14,9 +14,9 @@
   # Set LightDM as the default display manager
   services.xserver.displayManager.defaultSession = "xfce";
 
-  # Install XFCE Whisker Menu Plugin
+  # Install XFCE Whisker Menu Plugin and other plugins
   environment.systemPackages = with pkgs; [
-    xfce.xfce4-whiskermenu-plugin
+    xfce.xfce4-whiskermenu-plugin xfce.xfce4-docklike-plugin xfce.xfce4-panel-profiles xfce.xfce4-pulseaudio-plugin alacarte
   ];
 
   # Configuring XDG portal with specific backend settings
