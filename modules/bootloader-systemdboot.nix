@@ -1,28 +1,16 @@
-{ config, pkgs, ... }:
+ { config, pkgs, ... }:
+
 {
-  boot = {
-    kernelPackages = pkgs.linuxPackages_zen;  # Zen kernel includes fsync patches
+  # Enable systemd-boot as the bootloader
+  boot.loader.systemd-boot.enable = true;
 
-    # Optional: Additional kernel parameters for fsync
-    kernelParams = [ 
-      "fsync=1"
-      "futex_combat=1"  # Can help with some games
-    ];
+  # Allow the bootloader to modify EFI variables
+  boot.loader.efi.canTouchEfiVariables = true;
 
-    loader = {
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 10;
-        consoleMode = "max";
-        editor = false;
-      };
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot/efi";
-      };
-      timeout = 5;
-    };
-  };
+  # Additional configurations can be added here
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
+}
+
 
   # Optional but recommended: Enable gamemode
   programs.gamemode = {
