@@ -1,4 +1,4 @@
- { config, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   # Enable systemd-boot as the bootloader
@@ -8,9 +8,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Additional configurations can be added here
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
-}
-
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Optional but recommended: Enable gamemode
   programs.gamemode = {
