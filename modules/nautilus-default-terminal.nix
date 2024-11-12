@@ -3,7 +3,7 @@
 {
   programs.nautilus-open-any-terminal = {
     enable = true;
-    terminal = "kitty";
+    terminal = "alacritty";
   };
 
   environment = {
