@@ -6,6 +6,7 @@
     bitwarden
     git
     python312
+    btrfs-progs
     appimage-run
     papirus-icon-theme
     gnome.dconf-editor
