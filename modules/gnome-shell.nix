@@ -11,14 +11,19 @@
     pkgs.gnome.totem    #Gnome Video player
   ];
 
-  # Add systemd service to restart GNOME Shell after resume
-  systemd.user.services.gnome-shell-restart-after-resume = {
-    description = "Restart GNOME Shell after resume";
-    wantedBy = [ "suspend.target" ];
-    after = [ "suspend.target" ];
-    script = ''
-      sleep 2
-      gnome-shell --replace &
-    '';
-  };
+  # Add a custom script to your system
+  environment.systemPackages = with pkgs; [
+    (writeScriptBin "fix-gnome-display" ''
+      #!${bash}/bin/bash
+      notify-send "Display Fix Initiated" "Session will restart in 5 seconds..." -u critical -t 5000
+      
+      sleep 5
+      
+      dbus-send --session --type=method_call \
+        --dest=org.gnome.SessionManager \
+        /org/gnome/SessionManager \
+        org.gnome.SessionManager.Logout \
+        uint32:1
+    '')
+  ];
 }
