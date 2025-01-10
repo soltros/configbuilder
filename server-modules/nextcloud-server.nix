@@ -18,15 +18,15 @@
   # Nextcloud service configuration
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud28; # Adjust the Nextcloud version as needed
+    package = pkgs.nextcloud30; # Adjust the Nextcloud version as needed
     hostName = "nixos-server";
+    datadir = "/path/to/raid/nextcloud"; # Specify the data directory location
     config = {
       dbtype = "pgsql";
       dbname = "nextcloud";
       dbuser = "nextcloud";
       dbpassFile = "/etc/nextcloud-db-pass"; # Reference to the DB password file
       adminpassFile = "/etc/nextcloud-admin-pass";
-      # Additional Nextcloud configuration...
     };
   };
 
