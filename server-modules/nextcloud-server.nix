@@ -1,35 +1,50 @@
-{ config, pkgs, ... }:
-
-{
-  # Environment setup for Nextcloud admin and database passwords
-  environment.etc."nextcloud-admin-pass".text = "SECURE_PASSWORD_HERE";
-  environment.etc."nextcloud-db-pass".text = "ECURE_PASSWORD_HERE";
-
-  # PostgreSQL service configuration
-  services.postgresql = {
-    enable = true;
-    package = pkgs.postgresql_14;  # Adjust the PostgreSQL version as needed
-    initialScript = pkgs.writeText "nextcloud-db-init.sql" ''
-      CREATE ROLE nextcloud WITH LOGIN PASSWORD 'ECURE_PASSWORD_HERE';
-      CREATE DATABASE nextcloud WITH OWNER nextcloud;
-    '';
-  };
-
-  # Nextcloud service configuration
+{ config, lib, pkgs, ... }: {
+  services.nginx.enable = false;
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud30; # Adjust the Nextcloud version as needed
-    hostName = "nixos-server";
-    datadir = "/path/to/raid/nextcloud"; # Specify the data directory location
+    hostName = "localhost";
+    datadir = "/mnt/data/nextcloud";
+    database.createLocally = true;
     config = {
       dbtype = "pgsql";
-      dbname = "nextcloud";
-      dbuser = "nextcloud";
-      dbpassFile = "/etc/nextcloud-db-pass"; # Reference to the DB password file
-      adminpassFile = "/etc/nextcloud-admin-pass";
+      adminpassFile = "/mnt/data/nextcloud/admin_secret";
+    };
+    settings = {
+      overwritehost = "localhost";
+      overwriteport = 8090;
     };
   };
-
-  # Other services and configuration...
-  services.nextcloud.maxUploadSize = "20G";
+  services.phpfpm.pools.nextcloud.settings = {
+    "listen.owner" = config.services.httpd.user;
+    "listen.group" = config.services.httpd.group;
+  };
+  services.httpd = {
+    enable = true;
+    adminAddr = "webmaster@localhost";
+    extraModules = [ "proxy_fcgi" ];
+    virtualHosts."localhost" = {
+      documentRoot = config.services.nextcloud.package;
+      extraConfig = ''
+        <Directory "${config.services.nextcloud.package}">
+          <FilesMatch "\.php$">
+            <If "-f %{REQUEST_FILENAME}">
+              SetHandler "proxy:unix:${config.services.phpfpm.pools.nextcloud.socket}|fcgi://localhost/"
+            </If>
+          </FilesMatch>
+          <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteRule ^index\.php$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.php [L]
+          </IfModule>
+          DirectoryIndex index.php
+          Require all granted
+          Options +FollowSymLinks
+        </Directory>
+      '';
+    };
+  };
+  networking.firewall.allowedTCPPorts = [ 8090 ];
 }
