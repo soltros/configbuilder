@@ -9,8 +9,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-# Updating the channel to NixOS 24.05
-echo "Setting NixOS channel to 24.05..."
+# Updating the channel
+echo "Setting NixOS channel..."
 nix-channel --add https://nixos.org/channels/nixos-24.11 nixos
 nix-channel --update
 
