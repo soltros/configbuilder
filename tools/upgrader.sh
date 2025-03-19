@@ -11,7 +11,7 @@ fi
 
 # Updating the channel to NixOS 24.05
 echo "Setting NixOS channel to 24.05..."
-nix-channel --add https://nixos.org/channels/nixos-24.05 nixos
+nix-channel --add https://nixos.org/channels/nixos-24.11 nixos
 nix-channel --update
 
 # Upgrading the system
