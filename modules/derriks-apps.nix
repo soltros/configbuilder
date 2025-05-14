@@ -9,9 +9,7 @@
     btrfs-progs
     appimage-run
     papirus-icon-theme
-    gnome.dconf-editor
     libreoffice-qt
-    gnome.gnome-tweaks
     spotify
     tailscale
     vlc
@@ -21,13 +19,12 @@
     winetricks
     wine-staging
     pavucontrol
-    fluffychat
     distrobox
     geany
     thunderbird
     ntfs3g
     appimage-run
-    firefox
+    #firefox
     flatpak
     discord
     kopia
@@ -45,11 +42,8 @@
     pamixer
     gthumb
     unzip
-    gnome.file-roller
     lxrandr
     pinta
-    okular
-    plex-media-player
     virt-manager
   ];
 }
