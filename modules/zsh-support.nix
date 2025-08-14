@@ -14,15 +14,16 @@
         "docker" 
         "kubectl" 
         "history-substring-search"
-        "zsh-autosuggestions"
+        # Remove zsh-autosuggestions from here since it's handled below
       ];
-      theme = "robbyrussell"; # You can change this to your preferred theme
+      theme = "terminalparty";
+      custom = "$HOME/.oh-my-zsh/custom";
     };
     
     # Enable completion for system packages
     enableCompletion = true;
     
-    # Auto-suggestions (if not using oh-my-zsh plugin)
+    # Enable auto-suggestions (NixOS will handle this properly)
     autosuggestions.enable = true;
     
     # Syntax highlighting
