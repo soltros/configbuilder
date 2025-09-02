@@ -1,12 +1,13 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  # Enable systemd-boot as the bootloader
-  boot.loader.systemd-boot.enable = true;
-  # This option needs to be set to false when using lanzaboote
-  boot.loader.systemd-boot.manageScript = "manual";
+  # Lanzaboote handles this, so we disable the standard systemd-boot module.
+  # You must also follow this guide here: https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  # The 'manageScript' option is not supported and has been commented out.
+  # boot.loader.systemd-boot.manageScript = "manual";
 
-  # Allow the bootloader to modify EFI variables
+  # Allow the bootloader to modify EFI variables.
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Additional configurations can be added here
