@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 {
-  #services.xserver.displayManager.defaultSession = "none+qtile";
+  #services.displayManager.defaultSession = "none+qtile";
   services.xserver.windowManager.qtile.enable = true;
 }
 

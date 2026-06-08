@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 {
-  #services.xserver.displayManager.defaultSession = "none+bspwm";
+  #services.displayManager.defaultSession = "none+bspwm";
   services.xserver.windowManager.bspwm.enable = true;
 }
 

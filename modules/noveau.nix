@@ -21,7 +21,7 @@
   };
 
   # Enable hardware acceleration for Nouveau
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
       # Add packages needed for Nouveau acceleration here

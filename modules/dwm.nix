@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 {
-  #services.xserver.displayManager.defaultSession = "none+dwm";
+  #services.displayManager.defaultSession = "none+dwm";
   services.xserver.windowManager.dwm.enable = true;
   nixpkgs.overlays = [
   (final: prev: {

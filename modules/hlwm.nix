@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 {
-  #services.xserver.displayManager.defaultSession = "none+herbstluftwm";
+  #services.displayManager.defaultSession = "none+herbstluftwm";
   services.xserver.windowManager.herbstluftwm.enable = true;
 }
 

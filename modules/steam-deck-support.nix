@@ -20,10 +20,10 @@ in {
     };
   };
 
-  services.xserver.displayManager.gdm.wayland = lib.mkForce true;
-  services.xserver.displayManager.defaultSession = "gamescope-wayland";
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "deck";
+  services.displayManager.gdm.wayland = lib.mkForce true;
+  services.displayManager.defaultSession = "gamescope-wayland";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "deck";
 
   # Enable GNOME
   sound.enable = true;

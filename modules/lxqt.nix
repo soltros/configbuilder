@@ -39,14 +39,14 @@
   ];
 
   # Additional desktop environment configuration
+  services.displayManager = {
+    sddm.enable = true;
+  };
   services.xserver = {
     enable = true;
     desktopManager = {
       lxqt.enable = true;
       # Additional configurations for LXQt can be added here
-    };
-    displayManager = {
-      sddm.enable = true;
     };
   };
 

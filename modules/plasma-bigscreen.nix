@@ -27,8 +27,8 @@ in {
   };
 
   config = mkIf config.services.bigscreen-session.enable {
-    services.xserver.displayManager.sessionPackages = [ plasmaBigscreenSession ];
-    services.xserver.displayManager.defaultSession = "plasma-bigscreen";
+    services.displayManager.sessionPackages = [ plasmaBigscreenSession ];
+    services.displayManager.defaultSession = "plasma-bigscreen";
     environment.systemPackages = [ pkgs.libsForQt5.plasma-bigscreen ];
   };
 }

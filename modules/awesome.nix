@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 {
-  #services.xserver.displayManager.defaultSession = "none+awesome";
+  #services.displayManager.defaultSession = "none+awesome";
   services.xserver.windowManager.awesome.enable = true;
   services.xserver.windowManager.awesome = {
     luaModules = with pkgs.luaPackages; [

@@ -16,7 +16,7 @@
     celluloid                   # Video Player
     formatter                   # elementary OS filesystem formatter
     gthumb                      # Image Viewer
-    gnome.simple-scan           # Scanning
+    simple-scan                 # Scanning
     indicator-application-gtk3  # App Indicator
     pantheon.sideload           # elementary OS Flatpak installer
     torrential                  # elementary OS torrent client
@@ -34,12 +34,12 @@
   services = {
     pantheon.apps.enable = true;
 
+    displayManager = {
+      lightdm.enable = true;
+      lightdm.greeters.pantheon.enable = true;
+    };
     xserver = {
       enable = true;
-      displayManager = {
-        lightdm.enable = true;
-        lightdm.greeters.pantheon.enable = true;
-      };
 
       desktopManager.pantheon = {
         enable = true;

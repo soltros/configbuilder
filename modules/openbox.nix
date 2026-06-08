@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 {
-  #services.xserver.displayManager.defaultSession = "none+openbox";
+  #services.displayManager.defaultSession = "none+openbox";
   services.xserver.windowManager.openbox.enable = true;
 
   environment.systemPackages = with pkgs; [

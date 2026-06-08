@@ -8,14 +8,14 @@
 
   environment = {
     # Use lib.mkForce to ensure this value takes precedence over other definitions
-    sessionVariables.NAUTILUS_4_EXTENSION_DIR = lib.mkForce "${pkgs.gnome.nautilus-python}/lib/nautilus/extensions-4";
+    sessionVariables.NAUTILUS_4_EXTENSION_DIR = lib.mkForce "${pkgs.nautilus-python}/lib/nautilus/extensions-4";
     pathsToLink = [
       "/share/nautilus-python/extensions"
     ];
 
     systemPackages = [
-      pkgs.gnome.nautilus
-      pkgs.gnome.nautilus-python
+      pkgs.nautilus
+      pkgs.nautilus-python
     ];
   };
 }
