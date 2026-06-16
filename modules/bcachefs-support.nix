@@ -1,22 +1,18 @@
 { config, pkgs, ... }:
+
 {
-  # Enable filesystem support for Bcachefs
+  # Enable bcachefs support in the initrd and system
   boot.supportedFilesystems = [ "bcachefs" ];
 
-  # Specify the file system configuration
-  fileSystems."/" = {
-    device = "/dev/sda1"; # Replace with your device identifier
-    fsType = "bcachefs";
-    options = [ "compression=zstd" ]; # Example option, adjust as needed
-  };
 
-  # Use the latest Linux kernel supporting Bcachefs
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # Include bcachefs-tools 
   environment.systemPackages = with pkgs; [
+    # Explicitly include the user-space tools for formatting and managing drives
     bcachefs-tools
-  ];
 
-  # Additional configurations can be added here
+    # Required for unlocking encrypted bcachefs partitions
+    # (Addresses the bug mentioned in the wiki)
+    keyutils
+  ];
 }
